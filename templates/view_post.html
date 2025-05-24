@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Duffin's Blog{% endblock %}
+
+{% block content %}
+<article class="post-full container">
+    <header class="post-header">
+        {% if post.hero_banner_url %}
+        <img src="{{ post.hero_banner_url }}" alt="{{ post.title }} hero banner" class="hero-banner-full">
+        {% endif %}
+        <h1>{{ post.title }}</h1>
+        <div class="post-meta">
+            <span class="timestamp">Published: {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} UTC</span>
+            {% if post.last_updated and post.last_updated != post.timestamp %}
+                <span class="timestamp">Last Updated: {{ post.last_updated.strftime('%Y-%m-%d %H:%M:%S') }} UTC</span>
+            {% endif %}
+            <div class="tags">
+                Tags:
+                {% for tag in post_tags %}
+                <span class="tag">{{ tag }}</span>
+                {% else %}
+                <span>No tags</span>
+                {% endfor %}
+            </div>
+        </div>
+    </header>
+
+    <section class="post-content-full">
+        {{ post.parsed_content | safe }}
+    </section>
+
+    <footer class="post-controls">
+        <a href="{{ url_for('edit_post_page', slug=post.slug) }}" class="btn btn-primary">
+            <span class="material-icons">edit</span> Edit Post
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            <span class="material-icons">arrow_back</span> Back to All Posts
+        </a>
+        <form action="{{ url_for('delete_post', slug=post.slug) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+            <button type="submit" class="btn btn-danger">
+                <span class="material-icons">delete</span> Delete Post
+            </button>
+        </form>
+    </footer>
+</article>
+{% endblock %}

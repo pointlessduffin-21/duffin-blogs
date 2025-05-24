@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}Edit Post{% else %}Create New Post{% endif %} - Duffin's Blog{% endblock %}
+
+{% block head_extra %}
+<style>
+    .create-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .blog-section {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.8));
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 2px solid rgba(78, 205, 196, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        margin: 20px 0;
+    }
+    .markdown-editor {
+        width: 100%;
+        min-height: 400px;
+        padding: 20px;
+        border: 2px solid #e3f2fd;
+        border-radius: 12px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .markdown-editor:focus {
+        border-color: #4ecdc4;
+        box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        outline: none;
+        background: rgba(255, 255, 255, 1);
+        transform: translateY(-2px);
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2d3436;
+        font-size: 1.1em;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid rgba(78, 205, 196, 0.3);
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-control:focus {
+        border-color: #4ecdc4;
+        box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        outline: none;
+        background: rgba(255, 255, 255, 1);
+        transform: translateY(-1px);
+    }
+    .markdown-toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: linear-gradient(45deg, rgba(78, 205, 196, 0.1), rgba(69, 183, 209, 0.1));
+        border-radius: 12px;
+        border: 2px solid rgba(78, 205, 196, 0.2);
+        flex-wrap: wrap;
+    }
+    .markdown-btn {
+        padding: 8px 12px;
+        background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        min-width: 45px;
+    }
+    .markdown-btn:hover {
+        background: linear-gradient(45deg, #45b7d1, #4ecdc4);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(78, 205, 196, 0.3);
+    }
+    .markdown-help {
+        background: linear-gradient(45deg, rgba(116, 185, 255, 0.1), rgba(9, 132, 227, 0.1));
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 15px;
+        border: 2px solid rgba(116, 185, 255, 0.2);
+    }
+    .markdown-help h4 {
+        color: #0984e3;
+        margin-top: 0;
+        font-size: 1.1em;
+        font-weight: 700;
+    }
+    .markdown-help code {
+        background: rgba(78, 205, 196, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        color: #2d3436;
+        font-weight: 600;
+    }
+    .image-drop-area { border: 2px dashed #ccc; padding: 20px; text-align: center; margin-bottom: 1rem; cursor: pointer; }
+    .image-drop-area.dragover { border-color: #007bff; background-color: #f0f8ff; }
+    #uploaded-images-for-post img { max-width: 100px; max-height:100px; margin: 5px; border: 1px solid #ddd; }
+    .preview-section { 
+        margin-top: 2rem; 
+        padding: 2rem; 
+        border: 2px solid rgba(69, 183, 209, 0.3); 
+        border-radius: 16px; 
+        background: linear-gradient(135deg, rgba(69, 183, 209, 0.05), rgba(116, 185, 255, 0.05));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .preview-section h3 { 
+        margin-top: 0; 
+        color: #45b7d1;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid rgba(78, 205, 196, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-container">
+    <div class="blog-section">
+        <h2 style="text-align: center; margin-bottom: 2rem;">
+            <span class="material-icons">{% if is_edit %}edit_note{% else %}post_add{% endif %}</span>
+            {% if is_edit %}Edit "{{ post.title if post else 'Unknown' }}"{% else %}Create New Post{% endif %}
+        </h2>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form id="post-form" action="{{ url_for('create_post_page') if not is_edit else url_for('edit_post_page', slug=post.slug) }}" method="post" enctype="multipart/form-data" class="post-form card">
+        <div class="form-group">
+            <label for="title">Title <span class="required">*</span></label>
+            <input type="text" id="title" name="title" class="form-control" value="{{ title or (post.title if post else '') }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="hero_banner">Hero Banner Image (Optional)</label>
+            <input type="file" id="hero_banner" name="hero_banner" class="form-control-file" accept="image/*" onchange="previewHeroBanner(event)">
+            {% if post and post.hero_banner_url and not is_edit %}
+                <img id="hero_banner_preview_existing" src="{{ post.hero_banner_url }}" alt="Current Hero Banner" style="max-width: 200px; margin-top: 10px;">
+                <input type="checkbox" name="remove_hero_banner" id="remove_hero_banner"> <label for="remove_hero_banner">Remove current hero banner</label>
+            {% elif post and post.hero_banner_url and is_edit %}
+                 <img id="hero_banner_preview_existing" src="{{ post.hero_banner_url }}" alt="Current Hero Banner" style="max-width: 200px; margin-top: 10px;">
+                 <input type="checkbox" name="remove_hero_banner" id="remove_hero_banner"> <label for="remove_hero_banner">Remove current hero banner</label>
+            {% endif %}
+             <img id="hero_banner_preview_new" src="#" alt="New Hero Banner Preview" style="max-width: 200px; margin-top: 10px; display: none;">
+        </div>
+        
+        <div class="form-group">
+            <label for="content">Content <span class="required">*</span></label>
+            
+            <!-- Markdown Toolbar -->
+            <div class="markdown-toolbar">
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('**', '**')" title="Bold">B</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('*', '*')" title="Italic">I</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('~~', '~~')" title="Strikethrough">S</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('`', '`')" title="Code">&lt;/&gt;</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('## ', '')" title="Heading">H2</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('### ', '')" title="Heading">H3</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('[', '](url)')" title="Link">🔗</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('![alt](', ')')" title="Image">🖼️</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('> ', '')" title="Quote">❝</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('- ', '')" title="List">📋</button>
+                <button type="button" class="markdown-btn" onclick="insertMarkdown('[youtube](', ')')" title="YouTube">📺</button>
+            </div>
+            
+            <textarea name="content" id="content" class="markdown-editor" placeholder="Write your post content here using Markdown syntax...
+
+Examples:
+**Bold text**
+*Italic text*
+## Heading 2
+### Heading 3
+[Link text](https://example.com)
+![Image alt text](image-url.jpg)
+`inline code`
+> Quote text
+- List item
+[youtube](dQw4w9WgXcQ)">{{ content or (post.content if post else '') }}</textarea>
+            
+            <div class="markdown-help">
+                <h4>📝 Markdown Syntax Guide:</h4>
+                <div style="columns: 2; gap: 20px;">
+                    <p><strong>Text Formatting:</strong><br>
+                    <code>**bold**</code> → <strong>bold</strong><br>
+                    <code>*italic*</code> → <em>italic</em><br>
+                    <code>~~strikethrough~~</code> → <del>strikethrough</del><br>
+                    <code>`code`</code> → <code>code</code></p>
+                    
+                    <p><strong>Links & Media:</strong><br>
+                    <code>[text](url)</code> → link<br>
+                    <code>![alt](image_url)</code> → image<br>
+                    <code>[youtube](video_id)</code> → YouTube embed<br>
+                    <code>[embed](url)</code> → iframe embed</p>
+                    
+                    <p><strong>Structure:</strong><br>
+                    <code>## Heading 2</code><br>
+                    <code>### Heading 3</code><br>
+                    <code>> Quote</code><br>
+                    <code>- List item</code></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Tags (comma-separated)</label>
+            <input type="text" id="tags" name="tags" class="form-control" value="{{ tags or (post.tags | join(', ') if post and post.tags else '') }}">
+        </div>
+
+        <div class="form-group">
+            <label>Upload Images for Content</label>
+            <div id="image-drop-area" class="image-drop-area">
+                Drag & drop images here, or click to select files.
+            </div>
+            <input type="file" id="image_files_input" multiple accept="image/*" style="display: none;">
+            <div id="uploaded-images-for-post">
+                <!-- Uploaded image previews/links will appear here -->
+            </div>
+        </div>
+
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="material-icons">{% if is_edit %}save{% else %}publish{% endif %}</span> {% if is_edit %}Save Changes{% else %}Publish Post{% endif %}
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+            {% if is_edit %}
+            <a href="{{ url_for('view_post', slug=post.slug) }}" class="btn btn-info">Cancel Edit</a>
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Post</button>
+            <form id="delete-form" action="{{ url_for('delete_post', slug=post.slug) }}" method="POST" style="display: none;"></form>
+
+            {% endif %}
+        </div>
+    </form>
+
+    <div class="preview-section">
+        <h3>Live Preview</h3>
+        <h4 id="preview-title"></h4>
+        <img id="preview-hero-banner" src="#" alt="Hero Preview" style="max-width:100%; display:none; margin-bottom:1rem;">
+        <div id="preview-content" class="post-content-full"></div>
+        <div id="preview-tags" class="tags" style="margin-top:1rem;"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    let formHasChanges = false;
+    const contentTextarea = document.getElementById('content');
+
+
+    // Markdown helper functions
+    function insertMarkdown(prefix, suffix) {
+        const textarea = document.getElementById('content');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+        const replacement = prefix + selectedText + suffix;
+        
+        textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+        textarea.focus();
+        textarea.setSelectionRange(start + prefix.length, start + prefix.length + selectedText.length);
+        
+        updatePreview();
+        formHasChanges = true;
+    }
+
+    function parseForPreview(rawContent) {
+        let content = rawContent;
+        // Basic image: ![alt text](image_url)
+        content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="img-fluid mb-2" style="max-width:100%;">');
+        // Basic link: [link text](url)
+        content = content.replace(/\[(.*?)\]\((http[s]?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        // Basic YouTube embed: [youtube](video_id_or_url)
+        content = content.replace(/\[youtube\]\((?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)?([a-zA-Z0-9_-]{11})\)/g, '<div class="embed-responsive embed-responsive-16by9 mb-2"><iframe class="embed-responsive-item" src="https://www.youtube.com/embed/$1" allowfullscreen></iframe></div>');
+        // Basic generic iframe embed: [embed](url)
+        content = content.replace(/\[embed\]\((http[s]?:\/\/[^\)]+)\)/g, '<div class="embed-responsive embed-responsive-16by9 mb-2"><iframe class="embed-responsive-item" src="$1" allowfullscreen></iframe></div>');
+        // Bold text: **text**
+        content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Italic text: *text*
+        content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // Strikethrough: ~~text~~
+        content = content.replace(/~~(.*?)~~/g, '<del>$1</del>');
+        // Code: `code`
+        content = content.replace(/`(.*?)`/g, '<code>$1</code>');
+        // Headers
+        content = content.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+        content = content.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+        // Quote
+        content = content.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+        // List items
+        content = content.replace(/^- (.*$)/gim, '<li>$1</li>');
+        // Newlines to br
+        content = content.replace(/\n/g, '<br>');
+        
+        return content;
+    }
+
+
+    function updatePreview() {
+        document.getElementById('preview-title').textContent = document.getElementById('title').value;
+        
+        // Use the markdown textarea content for preview
+        const contentToPreview = parseForPreview(contentTextarea.value);
+        document.getElementById('preview-content').innerHTML = contentToPreview;
+
+        const tagsInput = document.getElementById('tags').value;
+        const tagsPreviewContainer = document.getElementById('preview-tags');
+        tagsPreviewContainer.innerHTML = 'Tags: ';
+        if (tagsInput.trim() !== '') {
+            tagsInput.split(',').forEach(tag => {
+                if (tag.trim() !== '') {
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = tag.trim();
+                    tagsPreviewContainer.appendChild(span);
+                }
+            });
+        } else {
+            const span = document.createElement('span');
+            span.textContent = 'No tags yet';
+            tagsPreviewContainer.appendChild(span);
+        }
+    }
+
+    function previewHeroBanner(event) {
+        const reader = new FileReader();
+        const previewExisting = document.getElementById('hero_banner_preview_existing');
+        const previewNew = document.getElementById('hero_banner_preview_new');
+        const previewSectionHero = document.getElementById('preview-hero-banner');
+
+        reader.onload = function(){
+            if (previewNew) {
+                previewNew.src = reader.result;
+                previewNew.style.display = 'block';
+            }
+            if (previewSectionHero) {
+                previewSectionHero.src = reader.result;
+                previewSectionHero.style.display = 'block';
+            }
+            if (previewExisting) {
+                previewExisting.style.display = 'none'; // Hide existing if new one is chosen
+            }
+            formHasChanges = true;
+        }
+        if (event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        } else {
+             if (previewNew) previewNew.style.display = 'none';
+             if (previewSectionHero) previewSectionHero.style.display = 'none';
+             if (previewExisting) previewExisting.style.display = 'block'; // Show existing if new one is deselected
+        }
+    }
+    
+    // Initial preview update if editing
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('title').value || contentTextarea.value.trim() !== '') {
+            updatePreview();
+        }
+        // If editing and there's an existing hero banner, show it in preview
+        const existingHeroPreview = document.getElementById('hero_banner_preview_existing');
+        const previewSectionHero = document.getElementById('preview-hero-banner');
+        if (existingHeroPreview && existingHeroPreview.src && existingHeroPreview.src !== window.location.href + "#") { // Check if src is valid
+            if (previewSectionHero) {
+                previewSectionHero.src = existingHeroPreview.src;
+                previewSectionHero.style.display = 'block';
+            }
+        }
+    });
+
+
+    document.getElementById('title').addEventListener('input', () => { updatePreview(); formHasChanges = true; });
+    contentTextarea.addEventListener('input', () => { updatePreview(); formHasChanges = true; });
+    document.getElementById('tags').addEventListener('input', () => { updatePreview(); formHasChanges = true; });
+    document.getElementById('hero_banner').addEventListener('change', () => { formHasChanges = true; });
+
+
+    function clearForm() {
+        if (confirm('Are you sure you want to clear all fields? Unsaved changes will be lost.')) {
+            document.getElementById('post-form').reset();
+            contentTextarea.value = ''; // Clear markdown editor
+            const previewNew = document.getElementById('hero_banner_preview_new');
+            if (previewNew) previewNew.style.display = 'none';
+            const previewSectionHero = document.getElementById('preview-hero-banner');
+            if (previewSectionHero) previewSectionHero.style.display = 'none';
+            const existingHero = document.getElementById('hero_banner_preview_existing');
+            if(existingHero) existingHero.style.display = 'block'; // Re-show if it was there
+            updatePreview();
+            formHasChanges = false;
+        }
+    }
+
+    function confirmDelete() {
+        if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+            document.getElementById('delete-form').submit();
+        }
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+        if (formHasChanges) {
+            // Most browsers will show a generic message.
+            e.preventDefault(); // For older browsers
+            e.returnValue = ''; // For modern browsers
+            return ''; // For some other browsers
+        }
+    });
+    
+    document.getElementById('post-form').addEventListener('submit', function() {
+        formHasChanges = false; // Reset flag on submit
+    });
+
+    // Image Drop Area & Upload Logic
+    const dropArea = document.getElementById('image-drop-area');
+    const imageFilesInput = document.getElementById('image_files_input');
+    const uploadedImagesContainer = document.getElementById('uploaded-images-for-post');
+
+    dropArea.addEventListener('click', () => imageFilesInput.click());
+    dropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropArea.classList.add('dragover');
+    });
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('dragover');
+    });
+    dropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropArea.classList.remove('dragover');
+        const files = event.dataTransfer.files;
+        if (files.length) {
+            handleFiles(files);
+        }
+    });
+    imageFilesInput.addEventListener('change', (event) => {
+        if (event.target.files.length) {
+            handleFiles(event.target.files);
+        }
+    });
+
+    function handleFiles(files) {
+        for (const file of files) {
+            if (file.type.startsWith('image/')) {
+                uploadFile(file);
+            }
+        }
+    }
+
+    function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formHasChanges = true; // Mark changes when a file is selected for upload
+
+        fetch('{{ url_for("upload_image_for_editor") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.url) {
+                const imgContainer = document.createElement('div');
+                imgContainer.style.display = 'inline-block';
+                imgContainer.style.position = 'relative';
+                imgContainer.style.margin = '5px';
+
+                const img = document.createElement('img');
+                img.src = data.url;
+                img.alt = file.name;
+                img.style.maxWidth = '100px';
+                img.style.maxHeight = '100px';
+                img.style.border = '1px solid #ddd';
+                
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy URL';
+                copyButton.type = 'button';
+                copyButton.className = 'btn btn-sm btn-info';
+                copyButton.style.position = 'absolute';
+                copyButton.style.bottom = '5px';
+                copyButton.style.right = '5px';
+                copyButton.style.opacity = '0.8';
+                copyButton.onclick = () => {
+                    navigator.clipboard.writeText(data.url).then(() => alert('Image URL copied to clipboard! Paste it into the content editor using ![alt text](URL) syntax.'));
+                };
+                
+                const insertButton = document.createElement('button');
+                insertButton.textContent = 'Insert';
+                insertButton.type = 'button';
+                insertButton.className = 'btn btn-sm btn-success';
+                insertButton.style.position = 'absolute';
+                insertButton.style.top = '5px';
+                insertButton.style.right = '5px';
+                insertButton.style.opacity = '0.8';
+                insertButton.onclick = () => {
+                    const textarea = document.getElementById('content');
+                    const markdownImage = `\n![${file.name}](${data.url})\n`;
+                    const cursorPos = textarea.selectionStart;
+                    textarea.value = textarea.value.substring(0, cursorPos) + markdownImage + textarea.value.substring(cursorPos);
+                    textarea.focus();
+                    textarea.setSelectionRange(cursorPos + markdownImage.length, cursorPos + markdownImage.length);
+                    updatePreview();
+                    formHasChanges = true;
+                };
+
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(copyButton);
+                imgContainer.appendChild(insertButton);
+                uploadedImagesContainer.appendChild(imgContainer);
+            } else if (data.error) {
+                alert('Error uploading ' + file.name + ': ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+            alert('Error uploading ' + file.name + '. See console for details.');
+        });
+    }
+
+</script>
+{% endblock %}
