@@ -15,6 +15,7 @@ A modern, full-featured blog platform built with Flask, featuring user authentic
 - **Hero Images**: Upload and display banner images for posts
 - **Tagging System**: Organize posts with custom tags
 - **SEO-Friendly URLs**: Automatic slug generation from post titles
+- **AI Summaries**: Automatic post summaries generated using Google's Gemini AI
 
 ### 🔐 Authentication & Security
 - **User Registration**: Account creation with email verification
@@ -45,6 +46,11 @@ A modern, full-featured blog platform built with Flask, featuring user authentic
 - **Custom Domain**: Support for custom email domains
 - **Security Features**: Time-limited tokens and secure email verification
 
+### 🤖 AI Integration
+- **Smart Summaries**: Automatic content summaries using Google's Gemini AI
+- **Content Analysis**: AI-powered insights for better content understanding
+- **Optional Feature**: AI summaries can be disabled if API key is not configured
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -62,7 +68,7 @@ A modern, full-featured blog platform built with Flask, featuring user authentic
 
 2. **Install dependencies**:
    ```bash
-   pip install flask flask-login flask-bcrypt flask-mail pymongo python-dotenv python-slugify pyjwt
+   pip install flask flask-login flask-bcrypt flask-mail pymongo python-dotenv python-slugify pyjwt google-generativeai
    ```
 
 3. **Set up environment variables**:
@@ -81,6 +87,9 @@ A modern, full-featured blog platform built with Flask, featuring user authentic
    MAIL_USE_TLS=True
    MAIL_USERNAME=your-email@gmail.com
    MAIL_PASSWORD=your-app-specific-password
+   
+   # AI Integration (optional)
+   GEMINI_API_KEY=your-gemini-api-key-here
    ```
 
 4. **Create upload directory**:
@@ -144,6 +153,18 @@ python -c "import secrets; print(secrets.token_hex(32))"
 
 # Generate JWT_SECRET_KEY
 python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+### Gemini AI Configuration
+For AI-powered post summaries, configure Google's Gemini API:
+
+1. **Get API Key**: Visit [Google AI Studio](https://aistudio.google.com/) and create an API key
+2. **Add to Environment**: Add `GEMINI_API_KEY=your-api-key-here` to your `.env` file
+3. **Optional Feature**: AI summaries will be automatically disabled if no API key is provided
+
+```bash
+# Example .env configuration
+GEMINI_API_KEY=your-gemini-api-key-here
 ```
 
 ## 📖 Usage

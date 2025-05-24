@@ -13,11 +13,21 @@ import jwt
 from werkzeug.utils import secure_filename
 from functools import wraps
 import secrets
+import google.generativeai as genai
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 load_dotenv()
+
+# Configure Gemini AI
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+if GEMINI_API_KEY and GEMINI_API_KEY != 'your-gemini-api-key-here':
+    genai.configure(api_key=GEMINI_API_KEY)
+    gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+else:
+    gemini_model = None
+    print("Warning: GEMINI_API_KEY not configured. AI summaries will be disabled.")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-this')
@@ -89,6 +99,49 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
+
+# AI Summary Generation Function
+def generate_ai_summary(content, title=""):
+    """Generate an AI summary of the blog post content using Gemini AI"""
+    if not gemini_model:
+        return None
+    
+    try:
+        # Clean the content and prepare prompt
+        clean_content = content.replace('\n', ' ').strip()
+        if len(clean_content) < 5:  # Too short to summarize
+            return None
+            
+        # Adjust prompt based on content length
+        if len(clean_content) < 50:
+            prompt = f"""
+            This is a very short blog post. Please provide a brief, thoughtful summary or interpretation in 1-2 sentences.
+            Even if the content is minimal, try to provide some context or insight.
+            
+            Title: {title}
+            Content: {clean_content}
+            
+            Summary:
+            """
+        else:
+            prompt = f"""
+            Please provide a concise and engaging summary of this blog post in 2-3 sentences. 
+            Focus on the main points and key takeaways. The summary should be informative yet accessible.
+            
+            Title: {title}
+            Content: {clean_content}
+            
+            Summary:
+            """
+        
+        response = gemini_model.generate_content(prompt)
+        if response and response.text:
+            return response.text.strip()
+    except Exception as e:
+        print(f"Error generating AI summary: {e}")
+        return None
+    
+    return None
 
 # JWT token decorator for API endpoints
 def token_required(f):
@@ -333,7 +386,37 @@ def view_post(slug):
         return "Post not found", 404
     post['parsed_content'] = parse_content_for_display(post.get('content', ''))
     post_tags = post.get('tags', [])
-    return render_template('view_post.html', post=post, post_tags=post_tags, now=datetime.now(timezone.utc))
+    
+    # Check if AI service is available and content exists
+    ai_available = bool(gemini_model and post.get('content') and len(post.get('content', '').strip()) >= 5)
+    
+    return render_template('view_post.html', post=post, post_tags=post_tags, ai_available=ai_available, now=datetime.now(timezone.utc))
+
+@app.route('/api/generate-summary/<slug>')
+def generate_summary_api(slug):
+    """API endpoint to generate AI summary for a post"""
+    try:
+        post = posts_collection.find_one({"slug": slug})
+        if not post:
+            return jsonify({'error': 'Post not found'}), 404
+        
+        if not gemini_model:
+            return jsonify({'error': 'AI service not available'}), 503
+        
+        content = post.get('content', '')
+        if len(content.strip()) < 5:
+            return jsonify({'error': 'Content too short for summary'}), 400
+            
+        ai_summary = generate_ai_summary(content, post.get('title', ''))
+        
+        if ai_summary:
+            return jsonify({'summary': ai_summary})
+        else:
+            return jsonify({'error': 'Failed to generate summary'}), 500
+            
+    except Exception as e:
+        print(f"Error in generate_summary_api: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required

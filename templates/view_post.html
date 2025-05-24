@@ -2,6 +2,199 @@
 
 {% block title %}{{ post.title }} - Duffin's Blog{% endblock %}
 
+{% block head_extra %}
+<style>
+    .author {
+        font-weight: 600;
+        color: #4ecdc4;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+    }
+    
+    .ai-summary-section {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.08), rgba(69, 183, 209, 0.08));
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(78, 205, 196, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .ai-summary-section::before {
+        content: 'Click to expand AI insights';
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(78, 205, 196, 0.2);
+        color: #4ecdc4;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75em;
+        font-weight: 500;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    .ai-summary-section:hover {
+        border-color: rgba(78, 205, 196, 0.4);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    .ai-summary-section:hover::before {
+        opacity: 1;
+    }
+    
+    .ai-summary-section.expanded {
+        cursor: default;
+    }
+    
+    .ai-summary-section.expanded::before {
+        display: none;
+    }
+    
+    .ai-summary-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+        justify-content: space-between;
+    }
+    
+    .ai-summary-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .ai-summary-header .material-icons {
+        color: #4ecdc4;
+        font-size: 24px;
+    }
+    
+    .ai-summary-header h3 {
+        margin: 0;
+        color: #45b7d1;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+    
+    .expand-icon {
+        transition: transform 0.3s ease;
+        color: #636e72;
+        cursor: pointer;
+    }
+    
+    .expand-icon.rotated {
+        transform: rotate(180deg);
+    }
+    
+    .ai-summary-content {
+        display: none;
+        font-size: 1.1em;
+        line-height: 1.6;
+        color: #2d3436;
+        margin-bottom: 12px;
+        font-style: italic;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .ai-summary-content.visible {
+        display: block;
+    }
+    
+    .ai-summary-loading {
+        display: none;
+        margin: 20px 0;
+    }
+    
+    .ai-summary-loading.visible {
+        display: block;
+    }
+    
+    .loading-bar {
+        width: 50%;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #4ecdc4, transparent);
+        border-radius: 2px;
+        animation: pulse-loading 1.5s infinite;
+        margin: 10px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .loading-bar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shine 1.5s infinite;
+    }
+    
+    .ai-summary-disclaimer {
+        border-top: 1px solid rgba(78, 205, 196, 0.2);
+        padding-top: 10px;
+        color: #636e72;
+        font-size: 0.85em;
+        display: none;
+    }
+    
+    .ai-summary-disclaimer.visible {
+        display: block;
+    }
+    
+    .ai-summary-error {
+        color: #e74c3c;
+        font-style: italic;
+        display: none;
+    }
+    
+    .ai-summary-error.visible {
+        display: block;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse-loading {
+        0% {
+            transform: translateX(-100%);
+        }
+        50% {
+            transform: translateX(0%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+    
+    @keyframes shine {
+        0% {
+            left: -100%;
+        }
+        100% {
+            left: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <article class="post-full container">
     <header class="post-header">
@@ -10,6 +203,9 @@
         {% endif %}
         <h1>{{ post.title }}</h1>
         <div class="post-meta">
+            {% if post.author_username %}
+            <span class="author">By: {{ post.author_username }}</span>
+            {% endif %}
             <span class="timestamp">Published: {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} UTC</span>
             {% if post.last_updated and post.last_updated != post.timestamp %}
                 <span class="timestamp">Last Updated: {{ post.last_updated.strftime('%Y-%m-%d %H:%M:%S') }} UTC</span>
@@ -24,6 +220,37 @@
             </div>
         </div>
     </header>
+
+    {% if ai_available %}
+    <section class="ai-summary-section" id="ai-summary-section" onclick="toggleAISummary()">
+        <div class="ai-summary-header">
+            <div class="ai-summary-title">
+                <span class="material-icons">auto_awesome</span>
+                <h3>AI Summary</h3>
+            </div>
+            <span class="material-icons expand-icon" id="expand-icon">expand_more</span>
+        </div>
+        
+        <div class="ai-summary-loading" id="ai-summary-loading">
+            <div class="loading-bar"></div>
+            <small>AI is analyzing your content...</small>
+        </div>
+        
+        <div class="ai-summary-content" id="ai-summary-content">
+            <!-- Summary will be loaded here -->
+        </div>
+        
+        <div class="ai-summary-error" id="ai-summary-error">
+            Unable to generate AI summary. Please try again later.
+        </div>
+        
+        <div class="ai-summary-disclaimer" id="ai-summary-disclaimer">
+            <small>Generated by Gemini AI • This summary is AI-generated and may not capture all nuances of the original content.</small>
+        </div>
+    </section>
+    {% else %}
+    <!-- AI summaries disabled or content too short -->
+    {% endif %}
 
     <section class="post-content-full">
         {{ post.parsed_content | safe }}
@@ -43,4 +270,87 @@
         </form>
     </footer>
 </article>
+
+<script>
+let summaryLoaded = false;
+let summaryExpanded = false;
+
+function toggleAISummary() {
+    const section = document.getElementById('ai-summary-section');
+    const content = document.getElementById('ai-summary-content');
+    const loading = document.getElementById('ai-summary-loading');
+    const error = document.getElementById('ai-summary-error');
+    const disclaimer = document.getElementById('ai-summary-disclaimer');
+    const expandIcon = document.getElementById('expand-icon');
+    
+    if (!summaryExpanded) {
+        // Expand the summary
+        summaryExpanded = true;
+        section.classList.add('expanded');
+        expandIcon.classList.add('rotated');
+        section.onclick = null; // Remove click handler when expanded
+        
+        if (!summaryLoaded) {
+            // Show loading animation
+            loading.classList.add('visible');
+            
+            // Load AI summary
+            const slug = '{{ post.slug }}';
+            fetch(`/api/generate-summary/${slug}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loading.classList.remove('visible');
+                    if (data.summary) {
+                        content.textContent = data.summary;
+                        content.classList.add('visible');
+                        disclaimer.classList.add('visible');
+                        summaryLoaded = true;
+                    } else if (data.error) {
+                        error.textContent = `Error: ${data.error}`;
+                        error.classList.add('visible');
+                    } else {
+                        error.classList.add('visible');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading AI summary:', err);
+                    loading.classList.remove('visible');
+                    error.textContent = `Failed to generate summary: ${err.message}`;
+                    error.classList.add('visible');
+                });
+        } else {
+            // Summary already loaded, just show it
+            content.classList.add('visible');
+            disclaimer.classList.add('visible');
+        }
+    }
+}
+
+// Add collapse functionality when clicking the expand icon after expansion
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('expand-icon').addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (summaryExpanded) {
+            const section = document.getElementById('ai-summary-section');
+            const content = document.getElementById('ai-summary-content');
+            const disclaimer = document.getElementById('ai-summary-disclaimer');
+            const error = document.getElementById('ai-summary-error');
+            const expandIcon = document.getElementById('expand-icon');
+            
+            summaryExpanded = false;
+            section.classList.remove('expanded');
+            expandIcon.classList.remove('rotated');
+            content.classList.remove('visible');
+            disclaimer.classList.remove('visible');
+            error.classList.remove('visible');
+            section.onclick = toggleAISummary;
+        }
+    });
+});
+</script>
 {% endblock %}
