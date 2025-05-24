@@ -1,0 +1,10 @@
+MONGO_URI=mongodb://<mongo_user>:<mongo_pass>@<mongo_ip>:<mongo_port>/duffins_blog?authSource=admin&retryWrites=true&w=majority
+SECRET_KEY=<use_your_own>
+JWT_SECRET_KEY=<use_your_own>
+
+# Email Configuration for Gmail
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USERNAME=<use_your_own>@gmail.com
+MAIL_PASSWORD=<use_your_own>
