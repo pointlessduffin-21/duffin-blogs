@@ -1,4 +1,13 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
 *.env
-.vscode
-_pycache_
-.idea
+.env
+.env.local
+
+# Editor directories
+.vscode/
+.idea/
