@@ -116,9 +116,8 @@
             <span class="material-icons">person_add</span> Create Account
         </button>
     </form>
-    
-    <div class="auth-links">
-        Already have an account? <a href="{{ url_for('login') }}">Sign in here</a>
+      <div class="auth-links">
+        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in here</a>
     </div>
 </div>
 {% endblock %}

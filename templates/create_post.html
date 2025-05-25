@@ -167,7 +167,7 @@
             <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
-        <form id="post-form" action="{{ url_for('create_post_page') if not is_edit else url_for('edit_post_page', slug=post.slug) }}" method="post" enctype="multipart/form-data" class="post-form card">
+        <form id="post-form" action="{{ url_for('blog.create_post_page') if not is_edit else url_for('blog.edit_post_page', slug=post.slug) }}" method="post" enctype="multipart/form-data" class="post-form card">
         <div class="form-group">
             <label for="title">Title <span class="required">*</span></label>
             <input type="text" id="title" name="title" class="form-control" value="{{ title or (post.title if post else '') }}" required>
@@ -263,11 +263,10 @@ Examples:
             <button type="submit" class="btn btn-primary">
                 <span class="material-icons">{% if is_edit %}save{% else %}publish{% endif %}</span> {% if is_edit %}Save Changes{% else %}Publish Post{% endif %}
             </button>
-            <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
-            {% if is_edit %}
-            <a href="{{ url_for('view_post', slug=post.slug) }}" class="btn btn-info">Cancel Edit</a>
+            <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>            {% if is_edit %}
+            <a href="{{ url_for('blog.view_post', slug=post.slug) }}" class="btn btn-info">Cancel Edit</a>
             <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Post</button>
-            <form id="delete-form" action="{{ url_for('delete_post', slug=post.slug) }}" method="POST" style="display: none;"></form>
+            <form id="delete-form" action="{{ url_for('blog.delete_post', slug=post.slug) }}" method="POST" style="display: none;"></form>
 
             {% endif %}
         </div>
@@ -490,7 +489,7 @@ Examples:
         formData.append('file', file);
         formHasChanges = true; // Mark changes when a file is selected for upload
 
-        fetch('{{ url_for("upload_image_for_editor") }}', {
+        fetch('{{ url_for("blog.upload_image_for_editor") }}', {
             method: 'POST',
             body: formData
         })
