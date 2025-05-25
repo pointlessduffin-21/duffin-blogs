@@ -6,6 +6,13 @@ struct BlogListView: View {
     @State private var showingProfile = false
     @State private var searchText = ""
     @State private var selectedTag: String?
+    @State private var showingEditPost = false
+    @State private var postToEdit: BlogPost?
+    
+    private func canEditPost(_ post: BlogPost) -> Bool {
+        guard let currentUser = blogService.currentUser else { return false }
+        return currentUser.id == post.authorId
+    }
     
     var filteredPosts: [BlogPost] {
         var posts = blogService.posts
@@ -97,6 +104,15 @@ struct BlogListView: View {
                                 Label("Open Post", systemImage: "doc.text")
                             }
                             
+                            if canEditPost(post) {
+                                Button(action: {
+                                    postToEdit = post
+                                    showingEditPost = true
+                                }) {
+                                    Label("Edit Post", systemImage: "pencil")
+                                }
+                            }
+                            
                             Button(action: {
                                 // Share post action
                                 let shareText = "Check out this blog post: \(post.title)"
@@ -120,7 +136,7 @@ struct BlogListView: View {
                             }
                         } preview: {
                             BlogPostDetailView(post: post)
-                                .frame(width: 300, height: 500)
+                                .frame(width: 280, height: 420)
                                 .cornerRadius(16)
                         }
                     }
@@ -168,6 +184,11 @@ struct BlogListView: View {
             }
             .sheet(isPresented: $showingCreatePost) {
                 CreatePostView()
+            }
+            .sheet(isPresented: $showingEditPost) {
+                if let postToEdit = postToEdit {
+                    EditPostView(post: postToEdit)
+                }
             }
             .sheet(isPresented: $showingProfile) {
                 if blogService.isAuthenticated {

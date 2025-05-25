@@ -66,8 +66,34 @@ struct BlogPost: Codable, Identifiable {
         let formatter = ISO8601DateFormatter()
         if let date = formatter.date(from: timestamp) {
             let displayFormatter = DateFormatter()
+            
+            // Check if the date is today
+            if Calendar.current.isDateInToday(date) {
+                displayFormatter.dateStyle = .none
+                displayFormatter.timeStyle = .short
+                return "Today at \(displayFormatter.string(from: date))"
+            }
+            
+            // Check if the date is yesterday
+            if Calendar.current.isDateInYesterday(date) {
+                displayFormatter.dateStyle = .none
+                displayFormatter.timeStyle = .short
+                return "Yesterday at \(displayFormatter.string(from: date))"
+            }
+            
+            // Check if the date is within this week
+            let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+            if date > weekAgo {
+                let dayFormatter = DateFormatter()
+                dayFormatter.dateFormat = "EEEE" // Day of week
+                displayFormatter.dateStyle = .none
+                displayFormatter.timeStyle = .short
+                return "\(dayFormatter.string(from: date)) at \(displayFormatter.string(from: date))"
+            }
+            
+            // For older dates, show a more friendly format
             displayFormatter.dateStyle = .medium
-            displayFormatter.timeStyle = .short
+            displayFormatter.timeStyle = .none
             return displayFormatter.string(from: date)
         }
         return timestamp

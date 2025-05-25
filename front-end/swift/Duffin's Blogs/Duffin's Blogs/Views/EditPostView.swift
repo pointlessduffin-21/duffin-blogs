@@ -3,13 +3,14 @@ import UIKit
 import PhotosUI
 import UniformTypeIdentifiers
 
-struct CreatePostView: View {
+struct EditPostView: View {
+    let post: BlogPost
     @StateObject private var blogService = BlogService.shared
     @Environment(\.dismiss) private var dismiss
     
-    @State private var title = ""
-    @State private var content = ""
-    @State private var tags = ""
+    @State private var title: String
+    @State private var content: String
+    @State private var tags: String
     @State private var selectedImage: UIImage?
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showImagePicker = false
@@ -19,6 +20,14 @@ struct CreatePostView: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var errorMessage = ""
+    @State private var removeCurrentImage = false
+    
+    init(post: BlogPost) {
+        self.post = post
+        _title = State(initialValue: post.title)
+        _content = State(initialValue: post.content)
+        _tags = State(initialValue: post.tags.joined(separator: ", "))
+    }
     
     var body: some View {
         NavigationView {
@@ -28,12 +37,12 @@ struct CreatePostView: View {
                     imageSection
                     tagsSection
                     contentSection
-                    createButton
+                    updateButton
                     Spacer(minLength: 50)
                 }
                 .padding(.horizontal, 20)
             }
-            .navigationTitle("New Post")
+            .navigationTitle("Edit Post")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -53,7 +62,7 @@ struct CreatePostView: View {
         .actionSheet(isPresented: $showImageSourceActionSheet) {
             ActionSheet(
                 title: Text("Select Image Source"),
-                message: Text("Choose how you'd like to add your hero image"),
+                message: Text("Choose how you'd like to update your hero image"),
                 buttons: [
                     .default(Text("Camera")) {
                         showCamera = true
@@ -75,6 +84,7 @@ struct CreatePostView: View {
                    let image = UIImage(data: data) {
                     await MainActor.run {
                         selectedImage = image
+                        removeCurrentImage = false
                     }
                 }
             }
@@ -106,43 +116,68 @@ struct CreatePostView: View {
                 .font(.headline)
                 .fontWeight(.semibold)
             
-            if let selectedImage = selectedImage {
-                selectedImageView(selectedImage)
+            if let currentSelectedImage = selectedImage {
+                // Show newly selected image
+                VStack(spacing: 12) {
+                    Image(uiImage: currentSelectedImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 200)
+                        .cornerRadius(12)
+                        .clipped()
+                    
+                    HStack(spacing: 16) {
+                        Button("Change Image") {
+                            showImageSourceActionSheet = true
+                        }
+                        .foregroundColor(.blue)
+                        
+                        Button("Remove Image") {
+                            selectedImage = nil
+                            removeCurrentImage = true
+                        }
+                        .foregroundColor(.red)
+                    }
+                    .font(.subheadline)
+                }
+            } else if let currentImageUrl = post.absoluteHeroBannerUrl, !currentImageUrl.isEmpty, !removeCurrentImage {
+                // Show current image from post
+                VStack(spacing: 12) {
+                    AsyncImage(url: URL(string: currentImageUrl)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Rectangle()
+                            .fill(Color(.systemGray5))
+                            .overlay(ProgressView())
+                    }
+                    .frame(height: 200)
+                    .cornerRadius(12)
+                    .clipped()
+                    
+                    HStack(spacing: 16) {
+                        Button("Change Image") {
+                            showImageSourceActionSheet = true
+                        }
+                        .foregroundColor(.blue)
+                        
+                        Button("Remove Image") {
+                            removeCurrentImage = true
+                        }
+                        .foregroundColor(.red)
+                    }
+                    .font(.subheadline)
+                }
             } else {
-                imagePickerButton
+                // Show add image button
+                addImageButton
             }
         }
     }
     
-    private func selectedImageView(_ image: UIImage) -> some View {
-        VStack(spacing: 12) {
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(height: 200)
-                .cornerRadius(12)
-                .clipped()
-            
-            HStack(spacing: 16) {
-                Button("Change Image") {
-                    showImageSourceActionSheet = true
-                }
-                .buttonStyle(.bordered)
-                
-                Button("Remove Image") {
-                    selectedImage = nil
-                    selectedPhotoItem = nil
-                }
-                .buttonStyle(.bordered)
-                .foregroundColor(.red)
-            }
-        }
-    }
-    
-    private var imagePickerButton: some View {
-        Button(action: {
-            showImageSourceActionSheet = true
-        }) {
+    private var addImageButton: some View {
+        Button(action: { showImageSourceActionSheet = true }) {
             VStack(spacing: 12) {
                 Image(systemName: "photo.badge.plus")
                     .font(.system(size: 40))
@@ -201,16 +236,16 @@ struct CreatePostView: View {
         }
     }
     
-    private var createButton: some View {
-        Button(action: createPost) {
+    private var updateButton: some View {
+        Button(action: updatePost) {
             HStack {
                 if isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         .scaleEffect(0.8)
                 } else {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Create Post")
+                    Image(systemName: "checkmark.circle.fill")
+                    Text("Update Post")
                         .fontWeight(.semibold)
                 }
             }
@@ -242,24 +277,33 @@ struct CreatePostView: View {
             .filter { !$0.isEmpty }
     }
     
-    private func createPost() {
+    private func updatePost() {
         isLoading = true
         
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // Convert selected image to base64 data URL if available
+        // Determine final banner URL
         var finalBannerUrl: String? = nil
-        if let selectedImage = selectedImage {
+        
+        if removeCurrentImage {
+            // User wants to remove image
+            finalBannerUrl = nil
+        } else if let selectedImage = selectedImage {
+            // User selected a new image
             if let imageData = selectedImage.jpegData(compressionQuality: 0.8) {
                 let base64String = imageData.base64EncodedString()
                 finalBannerUrl = "data:image/jpeg;base64,\(base64String)"
             }
+        } else {
+            // Keep existing image
+            finalBannerUrl = post.heroBannerUrl
         }
         
         Task {
             do {
-                try await blogService.createPost(
+                try await blogService.updatePost(
+                    slug: post.slug,
                     title: trimmedTitle,
                     content: trimmedContent,
                     tags: parsedTags,
@@ -284,5 +328,9 @@ struct CreatePostView: View {
 
 
 #Preview {
-    CreatePostView()
+    EditPostView(post: BlogPost.sample(
+        title: "Sample Blog Post",
+        content: "This is a sample blog post content for editing...",
+        tags: ["swift", "ios", "technology"]
+    ))
 }

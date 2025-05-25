@@ -3,6 +3,13 @@ import SwiftUI
 struct BlogPostDetailView: View {
     let post: BlogPost
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var blogService = BlogService.shared
+    @State private var showingEditPost = false
+    
+    private var canEditPost: Bool {
+        guard let currentUser = blogService.currentUser else { return false }
+        return currentUser.id == post.authorId
+    }
     
     var body: some View {
         ScrollView {
@@ -116,10 +123,21 @@ struct BlogPostDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                ShareLink(item: "Check out this blog post: \(post.title)") {
-                    Image(systemName: "square.and.arrow.up")
+                HStack {
+                    if canEditPost {
+                        Button(action: { showingEditPost = true }) {
+                            Image(systemName: "pencil")
+                        }
+                    }
+                    
+                    ShareLink(item: "Check out this blog post: \(post.title)") {
+                        Image(systemName: "square.and.arrow.up")
+                    }
                 }
             }
+        }
+        .sheet(isPresented: $showingEditPost) {
+            EditPostView(post: post)
         }
     }
 }

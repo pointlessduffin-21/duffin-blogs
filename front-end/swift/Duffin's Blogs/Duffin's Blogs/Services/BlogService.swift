@@ -120,6 +120,25 @@ class BlogService: ObservableObject {
         try await fetchPosts()
     }
     
+    func updatePost(slug: String, title: String, content: String, tags: [String], heroBannerUrl: String? = nil) async throws {
+        let request = CreatePostRequest(
+            title: title,
+            content: content,
+            tags: tags,
+            heroBannerUrl: heroBannerUrl
+        )
+        
+        let _: BlogPostResponse = try await performRequest(
+            endpoint: "/posts/\(slug)",
+            method: "PUT",
+            body: request,
+            requiresAuth: true
+        )
+        
+        // Refresh posts after updating
+        try await fetchPosts()
+    }
+    
     // MARK: - AI Summary Methods
     
     func generateAISummary(for slug: String) async throws -> String {
