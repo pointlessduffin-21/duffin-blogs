@@ -152,3 +152,12 @@ struct CreatePostRequest: Codable {
         case heroBannerUrl = "hero_banner_url"
     }
 }
+
+// MARK: - AI Summary Models
+struct AISummaryResponse: Codable {
+    let summary: String
+}
+
+struct AISummaryErrorResponse: Codable {
+    let error: String
+}

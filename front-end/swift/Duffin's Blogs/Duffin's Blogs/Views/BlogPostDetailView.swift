@@ -94,6 +94,11 @@ struct BlogPostDetailView: View {
                     
                     Divider()
                     
+                    // AI Summary
+                    AISummaryView(postSlug: post.slug)
+                    
+                    Divider()
+                    
                     // Content
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Article")

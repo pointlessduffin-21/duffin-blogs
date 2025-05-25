@@ -120,6 +120,17 @@ class BlogService: ObservableObject {
         try await fetchPosts()
     }
     
+    // MARK: - AI Summary Methods
+    
+    func generateAISummary(for slug: String) async throws -> String {
+        let response: AISummaryResponse = try await performRequest(
+            endpoint: "/generate-summary/\(slug)",
+            method: "GET",
+            requiresAuth: false
+        )
+        return response.summary
+    }
+    
     // MARK: - Generic Request Handler
     
     private func performRequest<T: Codable, U: Codable>(
@@ -165,16 +176,9 @@ class BlogService: ObservableObject {
             }
             
             do {
-                // Debug: Print raw response data
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("Raw response: \(responseString)")
-                }
                 return try JSONDecoder().decode(T.self, from: data)
             } catch {
                 print("Decoding error: \(error)")
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("Failed to decode response: \(responseString)")
-                }
                 throw APIError.decodingFailed
             }
         } catch {
