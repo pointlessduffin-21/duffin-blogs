@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		A106FE172DE288D500F2BEE7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A106FE012DE288D400F2BEE7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A106FE082DE288D400F2BEE7;
+			remoteInfo = "Duffin's Blogs";
+		};
+		A106FE212DE288D500F2BEE7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A106FE012DE288D400F2BEE7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A106FE082DE288D400F2BEE7;
+			remoteInfo = "Duffin's Blogs";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A106FE092DE288D400F2BEE7 /* Duffin's Blogs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Duffin's Blogs.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A106FE162DE288D500F2BEE7 /* Duffin's BlogsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Duffin's BlogsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A106FE202DE288D500F2BEE7 /* Duffin's BlogsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Duffin's BlogsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A106FE0B2DE288D400F2BEE7 /* Duffin's Blogs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Duffin's Blogs";
+			sourceTree = "<group>";
+		};
+		A106FE192DE288D500F2BEE7 /* Duffin's BlogsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Duffin's BlogsTests";
+			sourceTree = "<group>";
+		};
+		A106FE232DE288D500F2BEE7 /* Duffin's BlogsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Duffin's BlogsUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A106FE062DE288D400F2BEE7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A106FE132DE288D500F2BEE7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A106FE1D2DE288D500F2BEE7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A106FE002DE288D400F2BEE7 = {
+			isa = PBXGroup;
+			children = (
+				A106FE0B2DE288D400F2BEE7 /* Duffin's Blogs */,
+				A106FE192DE288D500F2BEE7 /* Duffin's BlogsTests */,
+				A106FE232DE288D500F2BEE7 /* Duffin's BlogsUITests */,
+				A106FE0A2DE288D400F2BEE7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A106FE0A2DE288D400F2BEE7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A106FE092DE288D400F2BEE7 /* Duffin's Blogs.app */,
+				A106FE162DE288D500F2BEE7 /* Duffin's BlogsTests.xctest */,
+				A106FE202DE288D500F2BEE7 /* Duffin's BlogsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A106FE082DE288D400F2BEE7 /* Duffin's Blogs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A106FE2A2DE288D500F2BEE7 /* Build configuration list for PBXNativeTarget "Duffin's Blogs" */;
+			buildPhases = (
+				A106FE052DE288D400F2BEE7 /* Sources */,
+				A106FE062DE288D400F2BEE7 /* Frameworks */,
+				A106FE072DE288D400F2BEE7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A106FE0B2DE288D400F2BEE7 /* Duffin's Blogs */,
+			);
+			name = "Duffin's Blogs";
+			packageProductDependencies = (
+			);
+			productName = "Duffin's Blogs";
+			productReference = A106FE092DE288D400F2BEE7 /* Duffin's Blogs.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A106FE152DE288D500F2BEE7 /* Duffin's BlogsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A106FE2D2DE288D500F2BEE7 /* Build configuration list for PBXNativeTarget "Duffin's BlogsTests" */;
+			buildPhases = (
+				A106FE122DE288D500F2BEE7 /* Sources */,
+				A106FE132DE288D500F2BEE7 /* Frameworks */,
+				A106FE142DE288D500F2BEE7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A106FE182DE288D500F2BEE7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A106FE192DE288D500F2BEE7 /* Duffin's BlogsTests */,
+			);
+			name = "Duffin's BlogsTests";
+			packageProductDependencies = (
+			);
+			productName = "Duffin's BlogsTests";
+			productReference = A106FE162DE288D500F2BEE7 /* Duffin's BlogsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A106FE1F2DE288D500F2BEE7 /* Duffin's BlogsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A106FE302DE288D500F2BEE7 /* Build configuration list for PBXNativeTarget "Duffin's BlogsUITests" */;
+			buildPhases = (
+				A106FE1C2DE288D500F2BEE7 /* Sources */,
+				A106FE1D2DE288D500F2BEE7 /* Frameworks */,
+				A106FE1E2DE288D500F2BEE7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A106FE222DE288D500F2BEE7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A106FE232DE288D500F2BEE7 /* Duffin's BlogsUITests */,
+			);
+			name = "Duffin's BlogsUITests";
+			packageProductDependencies = (
+			);
+			productName = "Duffin's BlogsUITests";
+			productReference = A106FE202DE288D500F2BEE7 /* Duffin's BlogsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A106FE012DE288D400F2BEE7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					A106FE082DE288D400F2BEE7 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					A106FE152DE288D500F2BEE7 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = A106FE082DE288D400F2BEE7;
+					};
+					A106FE1F2DE288D500F2BEE7 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = A106FE082DE288D400F2BEE7;
+					};
+				};
+			};
+			buildConfigurationList = A106FE042DE288D400F2BEE7 /* Build configuration list for PBXProject "Duffin's Blogs" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A106FE002DE288D400F2BEE7;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A106FE0A2DE288D400F2BEE7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A106FE082DE288D400F2BEE7 /* Duffin's Blogs */,
+				A106FE152DE288D500F2BEE7 /* Duffin's BlogsTests */,
+				A106FE1F2DE288D500F2BEE7 /* Duffin's BlogsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A106FE072DE288D400F2BEE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A106FE142DE288D500F2BEE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A106FE1E2DE288D500F2BEE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A106FE052DE288D400F2BEE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A106FE122DE288D500F2BEE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A106FE1C2DE288D500F2BEE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A106FE182DE288D500F2BEE7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A106FE082DE288D400F2BEE7 /* Duffin's Blogs */;
+			targetProxy = A106FE172DE288D500F2BEE7 /* PBXContainerItemProxy */;
+		};
+		A106FE222DE288D500F2BEE7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A106FE082DE288D400F2BEE7 /* Duffin's Blogs */;
+			targetProxy = A106FE212DE288D500F2BEE7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A106FE282DE288D500F2BEE7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A106FE292DE288D500F2BEE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A106FE2B2DE288D500F2BEE7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.yeems214.Duffin-s-Blogs";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A106FE2C2DE288D500F2BEE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.yeems214.Duffin-s-Blogs";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A106FE2E2DE288D500F2BEE7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.yeems214.Duffin-s-BlogsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Duffin's Blogs.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Duffin's Blogs";
+			};
+			name = Debug;
+		};
+		A106FE2F2DE288D500F2BEE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.yeems214.Duffin-s-BlogsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Duffin's Blogs.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Duffin's Blogs";
+			};
+			name = Release;
+		};
+		A106FE312DE288D500F2BEE7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.yeems214.Duffin-s-BlogsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Duffin's Blogs";
+			};
+			name = Debug;
+		};
+		A106FE322DE288D500F2BEE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q7CGPSWLWU;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.yeems214.Duffin-s-BlogsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Duffin's Blogs";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A106FE042DE288D400F2BEE7 /* Build configuration list for PBXProject "Duffin's Blogs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A106FE282DE288D500F2BEE7 /* Debug */,
+				A106FE292DE288D500F2BEE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A106FE2A2DE288D500F2BEE7 /* Build configuration list for PBXNativeTarget "Duffin's Blogs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A106FE2B2DE288D500F2BEE7 /* Debug */,
+				A106FE2C2DE288D500F2BEE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A106FE2D2DE288D500F2BEE7 /* Build configuration list for PBXNativeTarget "Duffin's BlogsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A106FE2E2DE288D500F2BEE7 /* Debug */,
+				A106FE2F2DE288D500F2BEE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A106FE302DE288D500F2BEE7 /* Build configuration list for PBXNativeTarget "Duffin's BlogsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A106FE312DE288D500F2BEE7 /* Debug */,
+				A106FE322DE288D500F2BEE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A106FE012DE288D400F2BEE7 /* Project object */;
+}
