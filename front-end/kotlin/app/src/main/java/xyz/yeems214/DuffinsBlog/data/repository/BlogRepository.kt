@@ -123,5 +123,20 @@ class BlogRepository(private val apiService: BlogApiService) {
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }    suspend fun generateAISummary(postSlug: String): Result<String> {
+        return try {
+            val response = withTimeoutOrNull(60000L) { // 60 second timeout for AI generation
+                apiService.generateAISummary(postSlug)
+            }
+            if (response?.isSuccessful == true) {
+                response.body()?.let { summaryResponse ->
+                    Result.success(summaryResponse.summary)
+                } ?: Result.failure(Exception("Failed to generate AI summary"))
+            } else {
+                Result.failure(Exception("Failed to generate AI summary: ${response?.message() ?: "Timeout"}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

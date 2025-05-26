@@ -12,11 +12,10 @@ object ApiClient {
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-    
-    private val okHttpClient = OkHttpClient.Builder()
+      private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(90, TimeUnit.SECONDS)  // Increased for AI generation
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
     

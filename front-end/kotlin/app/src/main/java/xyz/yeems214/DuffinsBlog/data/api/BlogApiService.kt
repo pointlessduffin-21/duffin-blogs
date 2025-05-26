@@ -41,5 +41,6 @@ interface BlogApiService {
     suspend fun searchPosts(@Query("q") query: String): Response<BlogPostsResponse>
     
     @GET("posts/by-tag/{tag}")
-    suspend fun getPostsByTag(@Path("tag") tag: String): Response<BlogPostsResponse>
+    suspend fun getPostsByTag(@Path("tag") tag: String): Response<BlogPostsResponse>    @GET("generate-summary/{postSlug}")
+    suspend fun generateAISummary(@Path("postSlug") postSlug: String): Response<AISummaryResponse>
 }

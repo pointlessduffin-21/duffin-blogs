@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import xyz.yeems214.DuffinsBlog.data.model.BlogPost
 import xyz.yeems214.DuffinsBlog.ui.viewmodel.BlogViewModel
+import xyz.yeems214.DuffinsBlog.utils.DateFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -369,24 +370,8 @@ private fun BlogPostCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    
-                    post.displayTimestamp?.let { dateString ->
-                        val formattedDate = try {
-                            val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateString)
-                            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-                            val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-                            "${dateFormat.format(date ?: Date())} • ${timeFormat.format(date ?: Date())}"
-                        } catch (e: Exception) {
-                            try {
-                                // Try ISO format without milliseconds
-                                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(dateString)
-                                val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-                                val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-                                "${dateFormat.format(date ?: Date())} • ${timeFormat.format(date ?: Date())}"
-                            } catch (e2: Exception) {
-                                dateString
-                            }
-                        }
+                      post.displayTimestamp?.let { dateString ->
+                        val formattedDate = DateFormatter.formatPostDate(dateString)
                         Text(
                             text = formattedDate,
                             style = MaterialTheme.typography.labelSmall,

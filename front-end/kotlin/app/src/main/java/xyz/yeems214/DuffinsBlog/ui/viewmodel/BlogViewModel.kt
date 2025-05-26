@@ -193,6 +193,49 @@ class BlogViewModel(
     suspend fun getCurrentUserId(): String? {
         return authRepository.getCurrentUserId()
     }
+      fun generateAISummary(postSlug: String) {
+        viewModelScope.launch {
+            try {
+                blogRepository.generateAISummary(postSlug)
+                    .onSuccess { summary ->
+                        // Update the specific post with the new summary
+                        val updatedPosts = _uiState.value.posts.map { post ->
+                            if (post.slug == postSlug) {
+                                post.copy(aiSummary = summary)
+                            } else {
+                                post
+                            }
+                        }
+                        val updatedFilteredPosts = _uiState.value.filteredPosts.map { post ->
+                            if (post.slug == postSlug) {
+                                post.copy(aiSummary = summary)
+                            } else {
+                                post
+                            }
+                        }
+                        
+                        _uiState.value = _uiState.value.copy(
+                            posts = updatedPosts,
+                            filteredPosts = updatedFilteredPosts
+                        )
+                        
+                        // Also update the selected post if it matches
+                        if (_selectedPost.value?.slug == postSlug) {
+                            _selectedPost.value = _selectedPost.value?.copy(aiSummary = summary)
+                        }
+                    }
+                    .onFailure { exception ->
+                        _uiState.value = _uiState.value.copy(
+                            error = "Failed to generate AI summary: ${exception.message}"
+                        )
+                    }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to generate AI summary: ${e.message}"
+                )
+            }
+        }
+    }
     
     fun getAllTags(): List<String> {
         return _uiState.value.posts

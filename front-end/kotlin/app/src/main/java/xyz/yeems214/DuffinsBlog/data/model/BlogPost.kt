@@ -82,3 +82,8 @@ data class ApiResponse<T>(
     @SerializedName("data")
     val data: T? = null
 )
+
+data class AISummaryResponse(
+    @SerializedName("summary")
+    val summary: String
+)

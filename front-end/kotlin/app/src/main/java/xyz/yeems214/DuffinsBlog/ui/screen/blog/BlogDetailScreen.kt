@@ -22,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import xyz.yeems214.DuffinsBlog.data.model.BlogPost
+import xyz.yeems214.DuffinsBlog.ui.components.AISummaryCard
 import xyz.yeems214.DuffinsBlog.ui.components.ArticleRenderer
 import xyz.yeems214.DuffinsBlog.ui.viewmodel.BlogViewModel
+import xyz.yeems214.DuffinsBlog.utils.DateFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -231,22 +233,7 @@ fun BlogDetailScreen(
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
-                                        val formattedDate = try {
-                                            val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateString)
-                                            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-                                            val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-                                            "${dateFormat.format(date ?: Date())} at ${timeFormat.format(date ?: Date())}"
-                                        } catch (e: Exception) {
-                                            try {
-                                                // Try ISO format without milliseconds
-                                                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(dateString)
-                                                val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-                                                val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-                                                "${dateFormat.format(date ?: Date())} at ${timeFormat.format(date ?: Date())}"
-                                            } catch (e2: Exception) {
-                                                dateString
-                                            }
-                                        }
+                                        val formattedDate = DateFormatter.formatPostDate(dateString)
                                         Text(
                                             text = formattedDate,
                                             style = MaterialTheme.typography.bodyMedium,
@@ -291,99 +278,13 @@ fun BlogDetailScreen(
                         }
                     }
                 }
-                
-                item {
-                    // AI Summary (if available)
-                    post.displaySummary?.takeIf { it.isNotBlank() }?.let { summary ->
-                        var isAiSummaryExpanded by remember { mutableStateOf(false) }
-                        
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f)
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 2.dp
-                            ),
-                            shape = MaterialTheme.shapes.medium
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                // Clickable header that expands/collapses the AI summary
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { isAiSummaryExpanded = !isAiSummaryExpanded }
-                                        .padding(vertical = 8.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.AutoAwesome,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Click to expand AI insights",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    Icon(
-                                        if (isAiSummaryExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                        contentDescription = if (isAiSummaryExpanded) "Collapse" else "Expand",
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                                
-                                // Content area that shows/hides based on expanded state
-                                AnimatedVisibility(
-                                    visible = isAiSummaryExpanded,
-                                    enter = expandVertically(animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)),
-                                    exit = shrinkVertically(animationSpec = tween(300)) + fadeOut(animationSpec = tween(300))
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 12.dp)
-                                    ) {
-                                        HorizontalDivider(
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
-                                            thickness = 1.dp,
-                                            modifier = Modifier.padding(bottom = 12.dp)
-                                        )
-                                        
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = "AI Summary",
-                                                style = MaterialTheme.typography.titleSmall,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Icon(
-                                                Icons.Default.ExpandMore,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                        }
-                                        
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        
-                                        Text(
-                                            text = summary,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2
-                                        )
-                                    }
-                                }
-                            }
+                  item {
+                    // AI Summary Card
+                    AISummaryCard(
+                        post = post,                        onGenerateSummary = { postSlug ->
+                            blogViewModel.generateAISummary(postSlug)
                         }
-                    }
+                    )
                 }
                 
                 item {
