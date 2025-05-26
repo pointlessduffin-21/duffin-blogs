@@ -277,10 +277,33 @@ private fun BlogPostCard(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Summary or Article Preview
-                val previewText = post.displaySummary?.takeIf { it.isNotBlank() } 
-                    ?: (post.content?.take(150) ?: "No article content available") + 
-                       if ((post.content?.length ?: 0) > 150) "..." else ""
+                // AI Summary or Article Preview
+                val hasAiSummary = post.displaySummary?.isNotBlank() == true
+                val previewText = if (hasAiSummary) {
+                    post.displaySummary ?: ""
+                } else {
+                    (post.content?.take(150) ?: "No article content available") + 
+                    if ((post.content?.length ?: 0) > 150) "..." else ""
+                }
+                
+                if (hasAiSummary) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "AI Summary",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 
                 Text(
                     text = previewText,
