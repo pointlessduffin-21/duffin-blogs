@@ -70,7 +70,7 @@ struct ProfileView: View {
                             .foregroundColor(.blue)
                         Text("Server")
                         Spacer()
-                        Text("localhost:5003")
+                        Text("https://duffin-blogs.yeems214.xyz")
                             .foregroundColor(.secondary)
                     }
                 }

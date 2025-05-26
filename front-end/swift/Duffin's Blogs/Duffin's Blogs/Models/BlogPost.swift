@@ -56,7 +56,7 @@ struct BlogPost: Codable, Identifiable {
         
         // Convert relative URL to absolute URL
         if heroBannerUrl.hasPrefix("/") {
-            return "http://localhost:5003\(heroBannerUrl)"
+            return "https://duffin-blogs.yeems214.xyz\(heroBannerUrl)"
         }
         
         return heroBannerUrl

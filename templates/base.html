@@ -11,16 +11,17 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="container">            <a class="navbar-brand" href="{{ url_for('blog.index') }}">Duffin's Blog</a>
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Duffin's Blog</a>
             <ul class="navbar-nav">
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('blog.create_post_page') }}">Create Post</a></li>
-                    <li><a href="{{ url_for('blog.index') }}#recent-posts">Recent Posts</a></li>
-                    <li><a href="{{ url_for('auth.logout') }}">Logout ({{ current_user.username }})</a></li>
+                    <li><a href="{{ url_for('create_post_page') }}">Create Post</a></li>
+                    <li><a href="{{ url_for('index') }}#recent-posts">Recent Posts</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('blog.index') }}#recent-posts">Recent Posts</a></li>
-                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('index') }}#recent-posts">Recent Posts</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
                 {% endif %}
             </ul>
         </div>

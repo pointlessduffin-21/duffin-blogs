@@ -4,7 +4,7 @@ import Combine
 class BlogService: ObservableObject {
     static let shared = BlogService()
     
-    private let baseURL = "http://localhost:5003/api"
+    private let baseURL = "https://duffin-blogs.yeems214.xyz/api"
     private let session = URLSession.shared
     
     @Published var isAuthenticated = false
