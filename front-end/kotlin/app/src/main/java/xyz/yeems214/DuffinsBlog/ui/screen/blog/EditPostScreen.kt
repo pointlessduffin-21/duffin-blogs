@@ -16,35 +16,38 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import xyz.yeems214.DuffinsBlog.data.model.BlogPost
 import xyz.yeems214.DuffinsBlog.ui.viewmodel.BlogViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePostScreen(
+fun EditPostScreen(
+    post: BlogPost,
     blogViewModel: BlogViewModel,
     onBackClick: () -> Unit,
-    onPostCreated: () -> Unit
+    onPostUpdated: () -> Unit
 ) {
     val uiState by blogViewModel.uiState.collectAsStateWithLifecycle()
     
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-    var heroBannerUrl by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(post.title ?: "") }
+    var content by remember { mutableStateOf(post.content ?: "") }
+    var heroBannerUrl by remember { mutableStateOf(post.heroBannerUrl ?: "") }
     var tagInput by remember { mutableStateOf("") }
-    var tags by remember { mutableStateOf(mutableListOf<String>()) }
-    var showImageUrlField by remember { mutableStateOf(false) }
+    var tags by remember { mutableStateOf(post.tags?.toMutableList() ?: mutableListOf<String>()) }
+    var showImageUrlField by remember { mutableStateOf(heroBannerUrl.isNotEmpty()) }
+    var isUpdating by remember { mutableStateOf(false) }
     
     LaunchedEffect(uiState.isCreating) {
-        if (!uiState.isCreating && uiState.error == null && title.isNotEmpty()) {
-            // Post was successfully created
-            onPostCreated()
+        if (isUpdating && !uiState.isCreating && uiState.error == null) {
+            // Post was successfully updated
+            onPostUpdated()
         }
     }
     
     Column(modifier = Modifier.fillMaxSize()) {
         // Top App Bar
         TopAppBar(
-            title = { Text("Create Post") },
+            title = { Text("Edit Post") },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -53,8 +56,10 @@ fun CreatePostScreen(
             actions = {
                 TextButton(
                     onClick = {
+                        isUpdating = true
                         blogViewModel.clearError()
-                        blogViewModel.createPost(
+                        blogViewModel.updatePost(
+                            postId = post.id ?: "",
                             title = title.trim(),
                             content = content.trim(),
                             tags = tags.toList(),
@@ -63,13 +68,13 @@ fun CreatePostScreen(
                     },
                     enabled = !uiState.isCreating && title.isNotBlank() && content.isNotBlank()
                 ) {
-                    if (uiState.isCreating) {
+                    if (uiState.isCreating && isUpdating) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(16.dp),
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text("Publish")
+                        Text("Update")
                     }
                 }
             }
@@ -169,7 +174,7 @@ fun CreatePostScreen(
                                 onClick = {
                                     val newTag = tagInput.trim()
                                     if (newTag.isNotEmpty() && !tags.contains(newTag)) {
-                                        tags.add(newTag)
+                                        tags = tags.toMutableList().apply { add(newTag) }
                                         tagInput = ""
                                     }
                                 },
@@ -197,7 +202,9 @@ fun CreatePostScreen(
                                     selected = false,
                                     trailingIcon = {
                                         IconButton(
-                                            onClick = { tags.remove(tag) },
+                                            onClick = { 
+                                                tags = tags.toMutableList().apply { remove(tag) }
+                                            },
                                             modifier = Modifier.size(18.dp)
                                         ) {
                                             Icon(

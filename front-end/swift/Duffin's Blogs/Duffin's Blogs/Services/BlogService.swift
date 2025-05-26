@@ -30,7 +30,21 @@ class BlogService: ObservableObject {
     private func checkAuthStatus() {
         if authToken != nil {
             isAuthenticated = true
-            // Optionally verify token with server
+            // Load stored user information
+            restoreUserFromStorage()
+        }
+    }
+    
+    private func restoreUserFromStorage() {
+        if let userData = UserDefaults.standard.data(forKey: "current_user"),
+           let user = try? JSONDecoder().decode(User.self, from: userData) {
+            currentUser = user
+        }
+    }
+    
+    private func saveUserToStorage(_ user: User) {
+        if let userData = try? JSONEncoder().encode(user) {
+            UserDefaults.standard.set(userData, forKey: "current_user")
         }
     }
     
@@ -49,6 +63,7 @@ class BlogService: ObservableObject {
             self.authToken = response.token
             self.currentUser = response.user
             self.isAuthenticated = true
+            self.saveUserToStorage(response.user)
         }
     }
     
@@ -65,6 +80,7 @@ class BlogService: ObservableObject {
             self.authToken = response.token
             self.currentUser = response.user
             self.isAuthenticated = true
+            self.saveUserToStorage(response.user)
         }
     }
     
@@ -73,6 +89,7 @@ class BlogService: ObservableObject {
         currentUser = nil
         isAuthenticated = false
         posts = []
+        UserDefaults.standard.removeObject(forKey: "current_user")
     }
     
     // MARK: - Blog Post Methods

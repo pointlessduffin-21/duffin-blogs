@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -180,7 +181,7 @@ fun BlogListScreen(
                     modifier = Modifier.padding(32.dp)
                 ) {
                     Icon(
-                        Icons.Default.Article,
+                        Icons.AutoMirrored.Filled.Article,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -248,7 +249,7 @@ private fun BlogPostCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
-            // Hero Banner
+            // Hero Banner - only show if available
             post.displayHeroImage?.let { imageUrl ->
                 AsyncImage(
                     model = imageUrl,
@@ -296,7 +297,7 @@ private fun BlogPostCard(
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(post.tags?.take(3) ?: emptyList()) { tag ->
+                        items(post.tags.orEmpty().take(3)) { tag ->
                             SuggestionChip(
                                 onClick = { },
                                 label = { 
@@ -307,13 +308,13 @@ private fun BlogPostCard(
                                 }
                             )
                         }
-                        if ((post.tags?.size ?: 0) > 3) {
+                        if (post.tags.orEmpty().size > 3) {
                             item {
                                 SuggestionChip(
                                     onClick = { },
                                     label = { 
                                         Text(
-                                            text = "+${(post.tags?.size ?: 0) - 3}",
+                                            text = "+${post.tags.orEmpty().size - 3}",
                                             style = MaterialTheme.typography.labelSmall
                                         ) 
                                     }

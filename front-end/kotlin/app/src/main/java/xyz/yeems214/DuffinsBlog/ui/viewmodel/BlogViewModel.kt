@@ -138,6 +138,62 @@ class BlogViewModel(
         }
     }
     
+    fun updatePost(postId: String, title: String, content: String, tags: List<String>, heroBannerUrl: String? = null) {
+        _uiState.value = _uiState.value.copy(isCreating = true, error = null)
+        
+        viewModelScope.launch {
+            val token = authRepository.getAuthToken()
+            if (token != null) {
+                blogRepository.updatePost(token, postId, title, content, tags, heroBannerUrl)
+                    .onSuccess { 
+                        _uiState.value = _uiState.value.copy(isCreating = false)
+                        loadPosts() // Refresh the posts list
+                    }
+                    .onFailure { exception ->
+                        _uiState.value = _uiState.value.copy(
+                            isCreating = false,
+                            error = exception.message ?: "Failed to update post"
+                        )
+                    }
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isCreating = false,
+                    error = "Authentication required"
+                )
+            }
+        }
+    }
+    
+    fun deletePost(postId: String) {
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+        
+        viewModelScope.launch {
+            val token = authRepository.getAuthToken()
+            if (token != null) {
+                blogRepository.deletePost(token, postId)
+                    .onSuccess { 
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        loadPosts() // Refresh the posts list
+                    }
+                    .onFailure { exception ->
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = exception.message ?: "Failed to delete post"
+                        )
+                    }
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Authentication required"
+                )
+            }
+        }
+    }
+    
+    suspend fun getCurrentUserId(): String? {
+        return authRepository.getCurrentUserId()
+    }
+    
     fun getAllTags(): List<String> {
         return _uiState.value.posts
             .mapNotNull { it.tags } // Filter out null tags lists

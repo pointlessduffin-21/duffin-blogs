@@ -44,7 +44,15 @@ data class BlogPost(
         get() = timestamp ?: createdAt
     
     val displayHeroImage: String?
-        get() = heroBannerUrl ?: heroImage
+        get() {
+            val heroUrl = heroBannerUrl ?: heroImage
+            return when {
+                heroUrl == null -> null
+                heroUrl.startsWith("http") -> heroUrl
+                heroUrl.startsWith("/") -> "https://duffin-blogs.yeems214.xyz$heroUrl"
+                else -> heroUrl
+            }
+        }
     
     val displaySummary: String?
         get() = aiSummary ?: summary

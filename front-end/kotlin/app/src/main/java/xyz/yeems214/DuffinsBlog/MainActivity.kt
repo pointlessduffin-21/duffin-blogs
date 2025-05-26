@@ -31,6 +31,7 @@ import xyz.yeems214.DuffinsBlog.ui.screen.auth.RegisterScreen
 import xyz.yeems214.DuffinsBlog.ui.screen.blog.BlogDetailScreen
 import xyz.yeems214.DuffinsBlog.ui.screen.blog.BlogListScreen
 import xyz.yeems214.DuffinsBlog.ui.screen.blog.CreatePostScreen
+import xyz.yeems214.DuffinsBlog.ui.screen.blog.EditPostScreen
 import xyz.yeems214.DuffinsBlog.ui.screen.profile.ProfileScreen
 import xyz.yeems214.DuffinsBlog.ui.theme.DuffinsBlogTheme
 import xyz.yeems214.DuffinsBlog.ui.viewmodel.AuthViewModel
@@ -158,6 +159,9 @@ fun DuffinsBlogApp() {
                 onTagClick = { tag ->
                     blogViewModel.filterByTag(tag)
                     navController.popBackStack()
+                },
+                onEditClick = { post ->
+                    navController.navigate(Screen.EditPost.createRoute(post.id ?: ""))
                 }
             )
         }
@@ -172,6 +176,30 @@ fun DuffinsBlogApp() {
                     navController.popBackStack()
                 }
             )
+        }
+        
+        composable(Screen.EditPost.route) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString(NavigationArgs.POST_ID) ?: ""
+            val uiState by blogViewModel.uiState.collectAsState()
+            val post = uiState.posts.find { it.id == postId }
+            
+            if (post != null) {
+                EditPostScreen(
+                    post = post,
+                    blogViewModel = blogViewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onPostUpdated = {
+                        navController.popBackStack()
+                    }
+                )
+            } else {
+                // Handle case where post is not found - navigate back
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
+            }
         }
         
         composable(Screen.Profile.route) {

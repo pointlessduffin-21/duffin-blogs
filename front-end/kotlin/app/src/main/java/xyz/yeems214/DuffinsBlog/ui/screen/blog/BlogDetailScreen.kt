@@ -1,5 +1,6 @@
 package xyz.yeems214.DuffinsBlog.ui.screen.blog
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,9 +30,19 @@ fun BlogDetailScreen(
     postId: String,
     blogViewModel: BlogViewModel,
     onBackClick: () -> Unit,
-    onTagClick: (String) -> Unit
+    onTagClick: (String) -> Unit,
+    onEditClick: ((BlogPost) -> Unit)? = null
 ) {
     val selectedPost by blogViewModel.selectedPost.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showOptionsMenu by remember { mutableStateOf(false) }
+    var currentUserId by remember { mutableStateOf<String?>(null) }
+    
+    // Get current user ID
+    LaunchedEffect(Unit) {
+        currentUserId = blogViewModel.getCurrentUserId()
+    }
     
     // Find the post from the current posts list if selectedPost is null
     val uiState by blogViewModel.uiState.collectAsStateWithLifecycle()
@@ -47,6 +58,9 @@ fun BlogDetailScreen(
         }
     }
     
+    // Check if current user owns the post
+    val isOwner = currentUserId != null && post?.authorId == currentUserId
+    
     Column(modifier = Modifier.fillMaxSize()) {
         // Top App Bar
         TopAppBar(
@@ -57,14 +71,58 @@ fun BlogDetailScreen(
                 }
             },
             actions = {
-                post?.let {
+                post?.let { blogPost ->
+                    // Share button
                     IconButton(
                         onClick = {
-                            // Share functionality could be implemented here
-                            // For now, we'll just show a toast-like message
+                            val shareIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_SUBJECT, blogPost.title ?: "Check out this blog post")
+                                putExtra(Intent.EXTRA_TEXT, 
+                                    "${blogPost.title ?: "Blog Post"}\n\n" +
+                                    "${blogPost.displaySummary ?: "A blog post from Duffin's Blog"}\n\n" +
+                                    "Read more at: https://duffin-blogs.yeems214.xyz/post/${blogPost.id}"
+                                )
+                            }
+                            context.startActivity(Intent.createChooser(shareIntent, "Share post"))
                         }
                     ) {
                         Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
+                    
+                    // More options menu for post owners
+                    if (isOwner) {
+                        Box {
+                            IconButton(onClick = { showOptionsMenu = true }) {
+                                Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                            }
+                            DropdownMenu(
+                                expanded = showOptionsMenu,
+                                onDismissRequest = { showOptionsMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Edit Post") },
+                                    onClick = {
+                                        showOptionsMenu = false
+                                        onEditClick?.invoke(blogPost)
+                                    },
+                                    leadingIcon = {
+                                        Icon(Icons.Default.Edit, contentDescription = null)
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Delete Post") },
+                                    onClick = {
+                                        showOptionsMenu = false
+                                        showDeleteDialog = true
+                                    },
+                                    leadingIcon = {
+                                        Icon(Icons.Default.Delete, contentDescription = null)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -90,7 +148,7 @@ fun BlogDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    // Hero Banner
+                    // Hero Banner - only show if available
                     post.displayHeroImage?.let { imageUrl ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -298,5 +356,32 @@ fun BlogDetailScreen(
                 }
             }
         }
+    }
+    
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Post") },
+            text = { Text("Are you sure you want to delete this post? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        post?.let { blogPost ->
+                            blogViewModel.deletePost(blogPost.id ?: "")
+                            onBackClick() // Navigate back after deletion
+                        }
+                    }
+                ) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

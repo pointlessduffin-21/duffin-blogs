@@ -78,6 +78,12 @@ dependencies {
     // DataStore
     implementation(libs.androidx.datastore.preferences)
     
+    // Markdown Support
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:html:4.6.2")
+    implementation("io.noties.markwon:image-coil:4.6.2")
+    implementation("io.noties.markwon:linkify:4.6.2")
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

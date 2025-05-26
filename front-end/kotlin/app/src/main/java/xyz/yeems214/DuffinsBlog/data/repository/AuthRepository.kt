@@ -75,4 +75,14 @@ class AuthRepository(
             null
         }
     }
+    
+    suspend fun getCurrentUserId(): String? {
+        return try {
+            withTimeoutOrNull(5000L) { // 5 second timeout
+                userPreferencesManager.userId.first()
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

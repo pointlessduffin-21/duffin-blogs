@@ -7,16 +7,21 @@ struct BlogPostDetailView: View {
     @StateObject private var userPreferences = UserPreferences.shared
     @State private var showingEditPost = false
     
+    // Get the most up-to-date version of the post from the service
+    private var currentPost: BlogPost {
+        blogService.posts.first(where: { $0.slug == post.slug }) ?? post
+    }
+    
     private var canEditPost: Bool {
         guard let currentUser = blogService.currentUser else { return false }
-        return currentUser.id == post.authorId
+        return currentUser.id == currentPost.authorId
     }
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Hero Image
-                if let heroBannerUrl = post.absoluteHeroBannerUrl, !heroBannerUrl.isEmpty {
+                if let heroBannerUrl = currentPost.absoluteHeroBannerUrl, !heroBannerUrl.isEmpty {
                     AsyncImage(url: URL(string: heroBannerUrl)) { image in
                         image
                             .resizable()
@@ -35,7 +40,7 @@ struct BlogPostDetailView: View {
                 
                 VStack(alignment: .leading, spacing: 16) {
                     // Title
-                    Text(post.title)
+                    Text(currentPost.title)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .fixedSize(horizontal: false, vertical: true)
@@ -49,7 +54,7 @@ struct BlogPostDetailView: View {
                                     .font(.title3)
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(post.authorUsername)
+                                    Text(currentPost.authorUsername)
                                         .font(.headline)
                                         .fontWeight(.semibold)
                                     
@@ -63,7 +68,7 @@ struct BlogPostDetailView: View {
                         Spacer()
                         
                         VStack(alignment: .trailing, spacing: 4) {
-                            if let postDate = post.timeAgoAsDate {
+                            if let postDate = currentPost.timeAgoAsDate {
                                 let dateTime = userPreferences.formatDateTime(postDate)
                                 
                                 Text(dateTime.date)
@@ -74,7 +79,7 @@ struct BlogPostDetailView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             } else {
-                                Text(post.formattedDate)
+                                Text(currentPost.formattedDate)
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                                 
@@ -89,7 +94,7 @@ struct BlogPostDetailView: View {
                     .cornerRadius(12)
                     
                     // Tags
-                    if !post.tags.isEmpty {
+                    if !currentPost.tags.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Tags")
                                 .font(.headline)
@@ -98,7 +103,7 @@ struct BlogPostDetailView: View {
                             LazyVGrid(columns: [
                                 GridItem(.adaptive(minimum: 80))
                             ], spacing: 8) {
-                                ForEach(post.tags, id: \.self) { tag in
+                                ForEach(currentPost.tags, id: \.self) { tag in
                                     Text("#\(tag)")
                                         .font(.caption)
                                         .fontWeight(.medium)
@@ -115,7 +120,7 @@ struct BlogPostDetailView: View {
                     Divider()
                     
                     // AI Summary
-                    AISummaryView(postSlug: post.slug)
+                    AISummaryView(postSlug: currentPost.slug)
                     
                     Divider()
                     
@@ -125,9 +130,11 @@ struct BlogPostDetailView: View {
                             .font(.headline)
                             .fontWeight(.semibold)
                         
-                        HTMLTextView(htmlContent: post.parsedContent)
+                        HTMLTextView(htmlContent: currentPost.parsedContent)
                             .frame(minHeight: 200)
                     }
+                    
+
                 }
                 .padding(.horizontal, 20)
             }
@@ -143,14 +150,18 @@ struct BlogPostDetailView: View {
                         }
                     }
                     
-                    ShareLink(item: "Check out this blog post: \(post.title)") {
+                    ShareLink(item: "https://duffin-blogs.yeems214.xyz/posts/\(currentPost.slug)") {
                         Image(systemName: "square.and.arrow.up")
                     }
                 }
             }
         }
         .sheet(isPresented: $showingEditPost) {
-            EditPostView(post: post)
+            EditPostView(post: currentPost)
+        }
+        // Force the view to update when posts array changes
+        .onReceive(blogService.$posts) { _ in
+            // This will trigger a view update when posts change
         }
     }
 }
