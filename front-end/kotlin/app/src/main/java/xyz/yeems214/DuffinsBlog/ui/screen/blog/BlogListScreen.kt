@@ -35,6 +35,13 @@ fun BlogListScreen(
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     
+    // Load posts when screen is first displayed
+    LaunchedEffect(Unit) {
+        if (uiState.posts.isEmpty() && !uiState.isLoading) {
+            blogViewModel.loadPosts()
+        }
+    }
+    
     LaunchedEffect(searchQuery) {
         if (searchQuery.isEmpty()) {
             blogViewModel.clearFilters()
@@ -241,11 +248,11 @@ private fun BlogPostCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
-            // Hero Image
-            post.heroImage?.let { imageUrl ->
+            // Hero Banner
+            post.displayHeroImage?.let { imageUrl ->
                 AsyncImage(
                     model = imageUrl,
-                    contentDescription = null,
+                    contentDescription = "Hero banner for ${post.title}",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
@@ -259,7 +266,7 @@ private fun BlogPostCard(
             ) {
                 // Title
                 Text(
-                    text = post.title,
+                    text = post.title ?: "Untitled",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -269,9 +276,10 @@ private fun BlogPostCard(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Summary or Content Preview
-                val previewText = post.summary?.takeIf { it.isNotBlank() } 
-                    ?: post.content.take(150) + if (post.content.length > 150) "..." else ""
+                // Summary or Article Preview
+                val previewText = post.displaySummary?.takeIf { it.isNotBlank() } 
+                    ?: (post.content?.take(150) ?: "No article content available") + 
+                       if ((post.content?.length ?: 0) > 150) "..." else ""
                 
                 Text(
                     text = previewText,
@@ -284,11 +292,11 @@ private fun BlogPostCard(
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 // Tags
-                if (post.tags.isNotEmpty()) {
+                if (post.tags?.isNotEmpty() == true) {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(post.tags.take(3)) { tag ->
+                        items(post.tags?.take(3) ?: emptyList()) { tag ->
                             SuggestionChip(
                                 onClick = { },
                                 label = { 
@@ -299,13 +307,13 @@ private fun BlogPostCard(
                                 }
                             )
                         }
-                        if (post.tags.size > 3) {
+                        if ((post.tags?.size ?: 0) > 3) {
                             item {
                                 SuggestionChip(
                                     onClick = { },
                                     label = { 
                                         Text(
-                                            text = "+${post.tags.size - 3}",
+                                            text = "+${(post.tags?.size ?: 0) - 3}",
                                             style = MaterialTheme.typography.labelSmall
                                         ) 
                                     }
@@ -338,12 +346,22 @@ private fun BlogPostCard(
                         )
                     }
                     
-                    post.createdAt?.let { dateString ->
+                    post.displayTimestamp?.let { dateString ->
                         val formattedDate = try {
                             val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateString)
-                            SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date ?: Date())
+                            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                            val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+                            "${dateFormat.format(date ?: Date())} • ${timeFormat.format(date ?: Date())}"
                         } catch (e: Exception) {
-                            dateString
+                            try {
+                                // Try ISO format without milliseconds
+                                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(dateString)
+                                val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                                val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+                                "${dateFormat.format(date ?: Date())} • ${timeFormat.format(date ?: Date())}"
+                            } catch (e2: Exception) {
+                                dateString
+                            }
                         }
                         Text(
                             text = formattedDate,

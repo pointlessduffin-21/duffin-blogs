@@ -49,6 +49,7 @@ struct BlogListView: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 .padding(.horizontal)
+                .padding(.vertical, 5)
                 
                 // Tag filter
                 if !allTags.isEmpty {

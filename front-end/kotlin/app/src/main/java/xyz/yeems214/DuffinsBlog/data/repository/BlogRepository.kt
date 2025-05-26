@@ -1,5 +1,6 @@
 package xyz.yeems214.DuffinsBlog.data.repository
 
+import kotlinx.coroutines.withTimeoutOrNull
 import xyz.yeems214.DuffinsBlog.data.api.BlogApiService
 import xyz.yeems214.DuffinsBlog.data.model.*
 
@@ -7,11 +8,13 @@ class BlogRepository(private val apiService: BlogApiService) {
     
     suspend fun getPosts(): Result<List<BlogPost>> {
         return try {
-            val response = apiService.getPosts()
-            if (response.isSuccessful) {
+            val response = withTimeoutOrNull(30000L) { // 30 second timeout
+                apiService.getPosts()
+            }
+            if (response?.isSuccessful == true) {
                 Result.success(response.body()?.posts ?: emptyList())
             } else {
-                Result.failure(Exception("Failed to fetch posts: ${response.message()}"))
+                Result.failure(Exception("Failed to fetch posts: ${response?.message() ?: "Timeout"}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -38,12 +41,12 @@ class BlogRepository(private val apiService: BlogApiService) {
         title: String,
         content: String,
         tags: List<String>,
-        heroImage: String? = null
+        heroBannerUrl: String? = null
     ): Result<BlogPost> {
         return try {
             val response = apiService.createPost(
                 authorization = "Bearer $token",
-                request = CreatePostRequest(title, content, tags, heroImage)
+                request = CreatePostRequest(title, content, tags, heroBannerUrl)
             )
             if (response.isSuccessful) {
                 response.body()?.let { post ->
@@ -63,13 +66,13 @@ class BlogRepository(private val apiService: BlogApiService) {
         title: String,
         content: String,
         tags: List<String>,
-        heroImage: String? = null
+        heroBannerUrl: String? = null
     ): Result<BlogPost> {
         return try {
             val response = apiService.updatePost(
                 authorization = "Bearer $token",
                 id = id,
-                request = CreatePostRequest(title, content, tags, heroImage)
+                request = CreatePostRequest(title, content, tags, heroBannerUrl)
             )
             if (response.isSuccessful) {
                 response.body()?.let { post ->

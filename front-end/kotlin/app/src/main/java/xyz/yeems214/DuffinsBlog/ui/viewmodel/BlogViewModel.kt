@@ -22,7 +22,8 @@ class BlogViewModel(
     val selectedPost: StateFlow<BlogPost?> = _selectedPost.asStateFlow()
     
     init {
-        loadPosts()
+        // Don't load posts immediately in init to avoid blocking app startup
+        // Posts will be loaded when BlogListScreen is displayed
     }
     
     fun loadPosts() {
@@ -63,9 +64,9 @@ class BlogViewModel(
                     .onFailure { 
                         // Fallback to local filtering
                         val filtered = _uiState.value.posts.filter { post ->
-                            post.title.contains(query, ignoreCase = true) ||
-                            post.content.contains(query, ignoreCase = true) ||
-                            post.tags.any { it.contains(query, ignoreCase = true) }
+                            post.title?.contains(query, ignoreCase = true) == true ||
+                            post.content?.contains(query, ignoreCase = true) == true ||
+                            post.tags?.any { it.contains(query, ignoreCase = true) } == true
                         }
                         _uiState.value = _uiState.value.copy(filteredPosts = filtered)
                     }
@@ -88,7 +89,7 @@ class BlogViewModel(
                 .onFailure {
                     // Fallback to local filtering
                     val filtered = _uiState.value.posts.filter { post ->
-                        post.tags.contains(tag)
+                        post.tags?.contains(tag) == true
                     }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -111,13 +112,13 @@ class BlogViewModel(
         _selectedPost.value = post
     }
     
-    fun createPost(title: String, content: String, tags: List<String>, heroImage: String? = null) {
+    fun createPost(title: String, content: String, tags: List<String>, heroBannerUrl: String? = null) {
         _uiState.value = _uiState.value.copy(isCreating = true, error = null)
         
         viewModelScope.launch {
             val token = authRepository.getAuthToken()
             if (token != null) {
-                blogRepository.createPost(token, title, content, tags, heroImage)
+                blogRepository.createPost(token, title, content, tags, heroBannerUrl)
                     .onSuccess { 
                         _uiState.value = _uiState.value.copy(isCreating = false)
                         loadPosts() // Refresh the posts list
@@ -138,7 +139,11 @@ class BlogViewModel(
     }
     
     fun getAllTags(): List<String> {
-        return _uiState.value.posts.flatMap { it.tags }.distinct().sorted()
+        return _uiState.value.posts
+            .mapNotNull { it.tags } // Filter out null tags lists
+            .flatten() // Flatten the lists of tags
+            .distinct()
+            .sorted()
     }
     
     fun clearError() {

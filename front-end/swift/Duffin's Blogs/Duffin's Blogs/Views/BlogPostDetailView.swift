@@ -4,6 +4,7 @@ struct BlogPostDetailView: View {
     let post: BlogPost
     @Environment(\.dismiss) private var dismiss
     @StateObject private var blogService = BlogService.shared
+    @StateObject private var userPreferences = UserPreferences.shared
     @State private var showingEditPost = false
     
     private var canEditPost: Bool {
@@ -62,13 +63,25 @@ struct BlogPostDetailView: View {
                         Spacer()
                         
                         VStack(alignment: .trailing, spacing: 4) {
-                            Text(post.formattedDate)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            Text(post.timeAgo)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            if let postDate = post.timeAgoAsDate {
+                                let dateTime = userPreferences.formatDateTime(postDate)
+                                
+                                Text(dateTime.date)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                
+                                Text(dateTime.time)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text(post.formattedDate)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                
+                                Text("Time unavailable")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                     .padding()

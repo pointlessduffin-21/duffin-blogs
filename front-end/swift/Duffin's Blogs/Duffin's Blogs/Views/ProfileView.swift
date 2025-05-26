@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject private var blogService = BlogService.shared
+    @StateObject private var userPreferences = UserPreferences.shared
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -52,6 +53,29 @@ struct ProfileView: View {
                             }
                         }
                         .padding(.vertical, 4)
+                    }
+                }
+                
+                Section("Settings") {
+                    HStack {
+                        Image(systemName: "clock")
+                            .foregroundColor(.blue)
+                        Text("Time Format")
+                        Spacer()
+                        Toggle("", isOn: $userPreferences.use24HourFormat)
+                            .labelsHidden()
+                    }
+                    
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(userPreferences.use24HourFormat ? "24-Hour Format" : "12-Hour Format")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text("Example: " + userPreferences.formatTime(Date()))
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
                     }
                 }
                 

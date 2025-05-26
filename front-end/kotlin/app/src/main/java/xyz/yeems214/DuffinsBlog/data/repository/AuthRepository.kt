@@ -1,6 +1,8 @@
 package xyz.yeems214.DuffinsBlog.data.repository
 
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import xyz.yeems214.DuffinsBlog.data.api.BlogApiService
 import xyz.yeems214.DuffinsBlog.data.model.*
 import xyz.yeems214.DuffinsBlog.data.preferences.UserPreferencesManager
@@ -55,10 +57,22 @@ class AuthRepository(
     }
     
     suspend fun isLoggedIn(): Boolean {
-        return userPreferencesManager.authToken.first() != null
+        return try {
+            withTimeoutOrNull(5000L) { // 5 second timeout
+                userPreferencesManager.authToken.first() != null
+            } ?: false
+        } catch (e: Exception) {
+            false
+        }
     }
     
     suspend fun getAuthToken(): String? {
-        return userPreferencesManager.authToken.first()
+        return try {
+            withTimeoutOrNull(5000L) { // 5 second timeout
+                userPreferencesManager.authToken.first()
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 }

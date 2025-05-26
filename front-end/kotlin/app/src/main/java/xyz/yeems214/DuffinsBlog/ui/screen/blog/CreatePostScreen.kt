@@ -28,7 +28,7 @@ fun CreatePostScreen(
     
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-    var heroImageUrl by remember { mutableStateOf("") }
+    var heroBannerUrl by remember { mutableStateOf("") }
     var tagInput by remember { mutableStateOf("") }
     var tags by remember { mutableStateOf(mutableListOf<String>()) }
     var showImageUrlField by remember { mutableStateOf(false) }
@@ -57,7 +57,7 @@ fun CreatePostScreen(
                             title = title.trim(),
                             content = content.trim(),
                             tags = tags.toList(),
-                            heroImage = heroImageUrl.takeIf { it.isNotBlank() }
+                            heroBannerUrl = heroBannerUrl.takeIf { it.isNotBlank() }
                         )
                     },
                     enabled = !uiState.isCreating && title.isNotBlank() && content.isNotBlank()
@@ -108,7 +108,7 @@ fun CreatePostScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Hero Image (Optional)",
+                            text = "Hero Banner (Optional)",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
@@ -126,10 +126,10 @@ fun CreatePostScreen(
                     if (showImageUrlField) {
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
-                            value = heroImageUrl,
-                            onValueChange = { heroImageUrl = it },
-                            label = { Text("Image URL") },
-                            placeholder = { Text("https://example.com/image.jpg") },
+                            value = heroBannerUrl,
+                            onValueChange = { heroBannerUrl = it },
+                            label = { Text("Hero Banner URL") },
+                            placeholder = { Text("https://example.com/banner.jpg") },
                             leadingIcon = {
                                 Icon(Icons.Default.Image, contentDescription = null)
                             },
@@ -213,12 +213,12 @@ fun CreatePostScreen(
                 }
             }
             
-            // Content Field
+            // Article Field
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it },
-                label = { Text("Content") },
-                placeholder = { Text("Write your blog post content here...") },
+                label = { Text("Article") },
+                placeholder = { Text("Write your blog post article here...") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),

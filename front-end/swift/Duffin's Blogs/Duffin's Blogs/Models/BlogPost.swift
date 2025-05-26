@@ -118,6 +118,30 @@ struct BlogPost: Codable, Identifiable {
         return "Unknown"
     }
     
+    var timeAgoAsDate: Date? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
+        // First try with the configured formatter
+        if let date = formatter.date(from: timestamp) {
+            return date
+        }
+        
+        // If that fails, try with a custom formatter for microseconds
+        let customFormatter = DateFormatter()
+        customFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        customFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        
+        if let date = customFormatter.date(from: timestamp) {
+            return date
+        }
+        
+        // Fallback: try without fractional seconds
+        let basicFormatter = ISO8601DateFormatter()
+        basicFormatter.formatOptions = [.withInternetDateTime]
+        return basicFormatter.date(from: String(timestamp.prefix(19)) + "Z")
+    }
+    
     // Static method for creating sample instances (for previews and testing)
     static func sample(
         id: String = "1",

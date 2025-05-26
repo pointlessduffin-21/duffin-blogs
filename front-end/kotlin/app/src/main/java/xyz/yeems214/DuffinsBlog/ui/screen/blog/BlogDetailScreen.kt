@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import xyz.yeems214.DuffinsBlog.data.model.BlogPost
+import xyz.yeems214.DuffinsBlog.ui.components.ArticleRenderer
 import xyz.yeems214.DuffinsBlog.ui.viewmodel.BlogViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,7 +32,6 @@ fun BlogDetailScreen(
     onTagClick: (String) -> Unit
 ) {
     val selectedPost by blogViewModel.selectedPost.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     
     // Find the post from the current posts list if selectedPost is null
     val uiState by blogViewModel.uiState.collectAsStateWithLifecycle()
@@ -52,7 +53,7 @@ fun BlogDetailScreen(
             title = { Text("Blog Post") },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
             actions = {
@@ -89,15 +90,15 @@ fun BlogDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    // Hero Image
-                    post.heroImage?.let { imageUrl ->
+                    // Hero Banner
+                    post.displayHeroImage?.let { imageUrl ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                         ) {
                             AsyncImage(
                                 model = imageUrl,
-                                contentDescription = null,
+                                contentDescription = "Hero banner for ${post.title}",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(250.dp),
@@ -110,7 +111,7 @@ fun BlogDetailScreen(
                 item {
                     // Title
                     Text(
-                        text = post.title,
+                        text = post.title ?: "Untitled",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -155,7 +156,7 @@ fun BlogDetailScreen(
                             }
                             
                             // Date
-                            post.createdAt?.let { dateString ->
+                            post.displayTimestamp?.let { dateString ->
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
                                         Icons.Default.DateRange,
@@ -171,9 +172,19 @@ fun BlogDetailScreen(
                                         )
                                         val formattedDate = try {
                                             val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(dateString)
-                                            SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date ?: Date())
+                                            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                                            val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+                                            "${dateFormat.format(date ?: Date())} at ${timeFormat.format(date ?: Date())}"
                                         } catch (e: Exception) {
-                                            dateString
+                                            try {
+                                                // Try ISO format without milliseconds
+                                                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(dateString)
+                                                val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                                                val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+                                                "${dateFormat.format(date ?: Date())} at ${timeFormat.format(date ?: Date())}"
+                                            } catch (e2: Exception) {
+                                                dateString
+                                            }
                                         }
                                         Text(
                                             text = formattedDate,
@@ -190,7 +201,7 @@ fun BlogDetailScreen(
                 
                 item {
                     // Tags
-                    if (post.tags.isNotEmpty()) {
+                    if (post.tags?.isNotEmpty() == true) {
                         Column {
                             Text(
                                 text = "Tags",
@@ -202,7 +213,7 @@ fun BlogDetailScreen(
                             LazyRow(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(post.tags) { tag ->
+                                items(post.tags.orEmpty()) { tag ->
                                     AssistChip(
                                         onClick = { onTagClick(tag) },
                                         label = { Text(tag) },
@@ -221,8 +232,8 @@ fun BlogDetailScreen(
                 }
                 
                 item {
-                    // Summary (if available)
-                    post.summary?.takeIf { it.isNotBlank() }?.let { summary ->
+                    // AI Summary (if available)
+                    post.displaySummary?.takeIf { it.isNotBlank() }?.let { summary ->
                         Card(
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -255,7 +266,7 @@ fun BlogDetailScreen(
                 }
                 
                 item {
-                    // Content
+                    // Article Content
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
@@ -265,17 +276,17 @@ fun BlogDetailScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "Content",
+                                text = "Article",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                text = post.content,
-                                style = MaterialTheme.typography.bodyLarge,
-                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.4,
-                                color = MaterialTheme.colorScheme.onSurface
+                            
+                            val articleContent = post.parsedContent ?: post.content ?: "No article content available"
+                            ArticleRenderer(
+                                content = articleContent,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
